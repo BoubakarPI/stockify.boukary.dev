@@ -9,3 +9,4 @@ from .models import Product
 class ProductListView(ListView):
     model = Product
     template_name = "inventory/product_list.html"
+
