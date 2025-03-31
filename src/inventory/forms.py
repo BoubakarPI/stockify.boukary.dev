@@ -1,7 +1,11 @@
-'''from django import forms
-from .models import Order  # Assure-toi d'avoir un modèle Order qui représente une commande
+from django.forms import ModelForm
 
-class OrderForm(forms.ModelForm):
+from .models import  Commande
+
+class CommandeForm(ModelForm):
     class Meta:
-        model = Order
-        fields = ['quantity', 'shipping_address']  # Par exemple, quantité et adresse de livraison'''
+        model = Commande
+        fields = '__all__'  # Statut peut être modifiable à ce moment, sinon on pourrait le laisser en lecture seule.
+
+
+

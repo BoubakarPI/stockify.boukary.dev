@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Commande {{ commande.id }}</title>
+</head>
+<body>
+    <h1>Commande #{{ commande.id }}</h1>
+    <p>Statut: {{ commande.statut }}</p>
+    <ul>
+        {% for item in commande.items.all %}
+            <li>{{ item.produit.name }} - {{ item.quantite }} x {{ item.produit.price }}€</li>
+        {% endfor %}
+    </ul>
+    <p>Total: {{ commande.total }}€</p>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{% extends 'main.html' %}
+{% block contenu %}
+<h1>Faire une commande</h1>
+<form action="" method="POST">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit" name="Commander">
+</form>
+{% endblock %}
