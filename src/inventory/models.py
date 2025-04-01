@@ -3,6 +3,7 @@ from django.utils import timezone
 
 # Create your models here.
 
+
 class Product(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
@@ -11,10 +12,13 @@ class Product(models.Model):
     thumbnail = models.ImageField(upload_to="products", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+   # category = models.CharField(max_length=255,null=True,blank=False)
     def __str__(self):
         return self.name
-    
+
+
+
+
     
 #class Commande(models.Model):
     
@@ -33,18 +37,4 @@ class Commande(models.Model):
     statut = models.CharField(max_length=20, choices=STATUT_CHOICES, default='en_entente')
     produit=models.ForeignKey(Product,on_delete=models.CASCADE,null=True)
     quantite=models.PositiveIntegerField(default=1)
-
-    def total(self):
-        total_commande = 0
-        for item in self.items.all():
-            total_commande += item.sous_total()
-
-
-class CommandeItem(models.Model):
-    commande=models.ForeignKey(Commande,related_name="items",on_delete=models.CASCADE)
-    produit=models.ForeignKey(Product,on_delete=models.CASCADE)
-    quantite=models.PositiveIntegerField()
-    def sous_total(self):
-        return self.produit.prix*self.quantite
-    
 
