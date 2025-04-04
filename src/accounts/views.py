@@ -1,7 +1,5 @@
-from django.contrib.auth import login, authenticate
-from django.contrib.auth.views import LoginView
+from django.contrib.auth import login, authenticate, logout
 from django.shortcuts import redirect, render
-
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 
 
@@ -31,3 +29,7 @@ def signup_view(request):
         form = CustomUserCreationForm()
 
     return render(request, "accounts/signup.html", {"form": form})
+
+def logout_user(request):
+    logout(request)
+    return redirect('home')

@@ -6,10 +6,11 @@
 </head>
 <body>
 <nav>
+    <a href="{% url 'home' %}">Accueil</a>
     {% if user.is_authenticated %}
         <p>Bienvenue, {{ user.fullname }} | <a href="{% url 'logout' %}">Déconnexion</a></p>
     {% else %}
-        <a href="{% url 'login' %}">Connexion</a> | <a href="{% url 'signup' %}">Inscription</a>
+        <a href="{% url 'signin' %}">Connexion</a> | <a href="{% url 'signup' %}">Inscription</a>
     {% endif %}
 </nav>
 
