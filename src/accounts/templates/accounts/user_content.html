@@ -53,7 +53,6 @@
     {% endfor %}
 </div>
 
-<!-- Modals pour les actions -->
 <!-- Modal Voir Utilisateur -->
 <div class="modal fade" id="viewUserModal" tabindex="-1" aria-labelledby="viewUserModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -127,25 +126,13 @@
                 <form>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="firstName" class="form-label">Prénom</label>
-                            <input type="text" class="form-control" id="firstName" value="Jean">
+                            <label for="fullname" class="form-label">Nom Prénom</label>
+                            <input type="text" class="form-control" id="fullname" name="fullname" value="Jean">
                         </div>
                         <div class="col-md-6">
-                            <label for="lastName" class="form-label">Nom</label>
-                            <input type="text" class="form-control" id="lastName" value="Dupont">
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
+                            <label for="email" class="form-label">Email</label>
                         <input type="email" class="form-control" id="email" value="jean.dupont@example.com">
-                    </div>
-                    <div class="mb-3">
-                        <label for="phone" class="form-label">Téléphone</label>
-                        <input type="tel" class="form-control" id="phone" value="+33 6 12 34 56 78">
-                    </div>
-                    <div class="mb-3">
-                        <label for="address" class="form-label">Adresse</label>
-                        <input type="text" class="form-control" id="address" value="123 Rue de Paris, 75001 Paris">
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="role" class="form-label">Rôle</label>
@@ -163,12 +150,6 @@
                             <option value="inactive">Inactif</option>
                             <option value="suspended">Suspendu</option>
                         </select>
-                    </div>
-                    <div class="mb-3">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
-                            <label class="form-check-label" for="emailNotifications">Notifications par email</label>
-                        </div>
                     </div>
                 </form>
             </div>
@@ -217,41 +198,25 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form>
+                <form method="POST" action="{% url 'add' %}">
+                    {% csrf_token %}
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="newFirstName" class="form-label">Prénom</label>
-                            <input type="text" class="form-control" id="newFirstName">
+                            <label for="newFullname" class="form-label">Nom Prénom</label>
+                            <input type="text" class="form-control"  name="fullname" id="newFullname">
                         </div>
                         <div class="col-md-6">
-                            <label for="newLastName" class="form-label">Nom</label>
-                            <input type="text" class="form-control" id="newLastName">
+                         <label for="newEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email" id="newEmail">
                         </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="newEmail" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="newEmail">
                     </div>
                     <div class="mb-3">
                         <label for="newPassword" class="form-label">Mot de passe</label>
-                        <input type="password" class="form-control" id="newPassword">
+                        <input type="password" class="form-control" name="password1" id="newPassword">
                     </div>
                     <div class="mb-3">
                         <label for="confirmPassword" class="form-label">Confirmer le mot de passe</label>
-                        <input type="password" class="form-control" id="confirmPassword">
-                    </div>
-                    <div class="mb-3">
-                        <label for="newPhone" class="form-label">Téléphone</label>
-                        <input type="tel" class="form-control" id="newPhone">
-                    </div>
-                    <div class="mb-3">
-                        <label for="newRole" class="form-label">Rôle</label>
-                        <select class="form-select" id="newRole">
-                            <option value="admin">Administrateur</option>
-                            <option value="editor">Éditeur</option>
-                            <option value="moderator">Modérateur</option>
-                            <option value="user" selected>Utilisateur</option>
-                        </select>
+                        <input type="password" class="form-control" name="password2" id="confirmPassword">
                     </div>
                     <div class="mb-3">
                         <div class="form-check form-switch">
@@ -259,11 +224,11 @@
                             <label class="form-check-label" for="sendWelcomeEmail">Envoyer un email de bienvenue</label>
                         </div>
                     </div>
+                    <button type="submit" class="btn btn-danger">Ajouter</button>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" class="btn btn-danger">Ajouter</button>
             </div>
         </div>
     </div>

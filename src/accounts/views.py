@@ -1,6 +1,8 @@
 from django.contrib.auth import login, authenticate, logout
 from django.shortcuts import redirect, render
-from django.views.generic import ListView
+from django.urls import reverse_lazy
+from django.views import View
+from django.views.generic import ListView, CreateView
 
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 from .models import User
@@ -11,6 +13,15 @@ from .models import User
 class AccountListView(ListView):
     model = User
     template_name = 'accounts/user_content.html'
+
+class CreateUserByAdminView(View):
+    def post(self, request, *args, **kwargs):
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            print('+++++++++++++ valid')
+            user = form.save()
+            return redirect('accounts')
+        return redirect('accounts')
 
 
 def signin_view(request):
@@ -27,17 +38,17 @@ def signin_view(request):
 
 
 def signup_view(request):
-    print(request)
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)  # Connexion automatique après inscription
-            return redirect("products")  # Redirige vers la page d'accueil
+            login(request, user)
+            return redirect("products")
     else:
         form = CustomUserCreationForm()
 
     return render(request, "accounts/signup.html", {"form": form})
+
 
 def logout_user(request):
     logout(request)
