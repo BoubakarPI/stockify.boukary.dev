@@ -2,20 +2,240 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Layout</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            min-height: 100vh;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            background-color: #fff;
+        }
+        .sidebar .nav-link {
+            color: #495057;
+            border-radius: 0.375rem;
+            margin: 0.25rem 0.75rem;
+            padding: 0.75rem 1rem;
+        }
+        .sidebar .nav-link:hover {
+            background-color: #f8f9fa;
+        }
+        .sidebar .nav-link.active {
+            background-color: #e9ecef;
+            color: #0d6efd;
+            font-weight: 500;
+        }
+        .sidebar .nav-link i {
+            margin-right: 0.5rem;
+        }
+        .main-content {
+            padding: 1.5rem;
+        }
+        .navbar {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            background-color: #fff;
+        }
+        .navbar-brand {
+            font-weight: 600;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+            color: #495057;
+            font-weight: 600;
+        }
+        .dropdown-menu {
+            border-radius: 0.5rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            border: none;
+            padding: 0.5rem 0;
+        }
+        .dropdown-item {
+            padding: 0.5rem 1.5rem;
+        }
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+        .dropdown-divider {
+            margin: 0.25rem 0;
+        }
+        .card {
+            border-radius: 0.5rem;
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        .card-header {
+            background-color: #fff;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+            font-weight: 600;
+        }
+        /* Styles pour les cartes produits et les actions au survol */
+        .product-card {
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .product-img-container {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .product-img-container img {
+            height: 100%;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        .product-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+        }
+
+        .product-card:hover .product-actions {
+            opacity: 1;
+        }
+
+        .card-footer {
+            border-top: 1px solid rgba(0, 0, 0, 0.125);
+        }
+
+        /* Limiter la hauteur du texte de description */
+        .card-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+    </style>
 </head>
 <body>
-<nav>
-    <a href="{% url 'home' %}">Accueil</a>
-    {% if user.is_authenticated %}
-        <p>Bienvenue, {{ user.fullname }} | <a href="{% url 'logout' %}">Déconnexion</a></p>
-    {% else %}
-        <a href="{% url 'signin' %}">Connexion</a> | <a href="{% url 'signup' %}">Inscription</a>
-    {% endif %}
-</nav>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <div class="d-flex align-items-center justify-content-center mb-4 px-3">
+                        <h5 class="fw-bold text-primary mb-0">Administration</h5>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{% url 'home' %}">
+                                <i class="bi bi-house-door"></i>
+                                Tableau de bord
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-people"></i>
+                                Utilisateurs
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-grid"></i>
+                                Produits
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-cart"></i>
+                                Commandes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-bar-chart"></i>
+                                Statistiques
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-gear"></i>
+                                Paramètres
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
 
-{% block content %}
+            <!-- Main content -->
+            <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <!-- Navbar -->
+                <nav class="navbar navbar-expand-lg navbar-light sticky-top mb-4">
+                    <div class="container-fluid">
+                        <button class="navbar-toggler d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target=".sidebar">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <a class="navbar-brand d-md-none" href="#">Administration</a>
 
-{% endblock %}
+                        <div class="d-flex ms-auto">
+                            {% if user.is_authenticated %}
+                            <div class="dropdown">
+                                <a class="user-info dropdown-toggle text-decoration-none" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <div class="avatar">
+                                        {{ user.fullname|slice:":1" }}
+                                    </div>
+                                    <div class="d-none d-sm-block">
+                                        <div class="fw-medium text-dark">{{ user.fullname }}</div>
+                                        <div class="small text-muted">Administrateur</div>
+                                    </div>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Mon profil</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Paramètres</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-2"></i>Déconnexion</a></li>
+                                </ul>
+                            </div>
+                            {% else %}
+                            <div>
+                                <a href="{% url 'signin' %}" class="btn btn-outline-primary me-2">Connexion</a>
+                                <a href="{% url 'signup' %}" class="btn btn-primary">Inscription</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Content -->
+                <main class="main-content">
+                    {% block content %}
+                    <!-- Le contenu sera injecté ici -->
+                    {% endblock %}
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
