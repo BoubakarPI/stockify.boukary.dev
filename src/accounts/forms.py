@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import UserModel
+from .models import User
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True, label="Addresse e-mail", widget=forms.EmailInput(attrs={
@@ -21,7 +21,7 @@ class CustomUserCreationForm(UserCreationForm):
     )
 
     class Meta:
-        model = UserModel
+        model = User
         fields = ["email", "fullname"]
 
 class CustomAuthenticationForm(AuthenticationForm):
