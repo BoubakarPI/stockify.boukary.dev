@@ -126,6 +126,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = "accounts.UserModel"
+AUTH_USER_MODEL = "accounts.User"
+
 MEDIA_URL = "/content/"
 MEDIA_ROOT = BASE_DIR / "medias"
