@@ -1,0 +1,594 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h4 mb-0">Tableau de bord</h2>
+    <div>
+        <button class="btn btn-outline-secondary me-2">
+            <i class="bi bi-download me-1"></i> Exporter
+        </button>
+        <button class="btn btn-danger">
+            <i class="bi bi-arrow-repeat me-1"></i> Actualiser
+        </button>
+    </div>
+</div>
+
+<!-- Cartes de statistiques -->
+<div class="row g-4 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card h-100 border-0">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="bg-primary bg-opacity-10 p-3 rounded">
+                            <i class="bi bi-grid text-primary fs-4"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h6 class="card-subtitle mb-1 text-muted">Produits</h6>
+                        <h2 class="card-title mb-0 h3">124</h2>
+                    </div>
+                </div>
+                <div class="mt-3 d-flex align-items-center">
+                    <span class="badge bg-success me-2">
+                        <i class="bi bi-arrow-up me-1"></i>12%
+                    </span>
+                    <small class="text-muted">Depuis le mois dernier</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card h-100 border-0">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="bg-info bg-opacity-10 p-3 rounded">
+                            <i class="bi bi-people text-info fs-4"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h6 class="card-subtitle mb-1 text-muted">Utilisateurs</h6>
+                        <h2 class="card-title mb-0 h3">1,254</h2>
+                    </div>
+                </div>
+                <div class="mt-3 d-flex align-items-center">
+                    <span class="badge bg-success me-2">
+                        <i class="bi bi-arrow-up me-1"></i>5.3%
+                    </span>
+                    <small class="text-muted">Depuis le mois dernier</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card h-100 border-0">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="bg-warning bg-opacity-10 p-3 rounded">
+                            <i class="bi bi-cart text-warning fs-4"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h6 class="card-subtitle mb-1 text-muted">Commandes</h6>
+                        <h2 class="card-title mb-0 h3">845</h2>
+                    </div>
+                </div>
+                <div class="mt-3 d-flex align-items-center">
+                    <span class="badge bg-success me-2">
+                        <i class="bi bi-arrow-up me-1"></i>8.4%
+                    </span>
+                    <small class="text-muted">Depuis le mois dernier</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card h-100 border-0">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="bg-success bg-opacity-10 p-3 rounded">
+                            <i class="bi bi-currency-dollar text-success fs-4"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h6 class="card-subtitle mb-1 text-muted">Revenus</h6>
+                        <h2 class="card-title mb-0 h3">12.5M Fcfa</h2>
+                    </div>
+                </div>
+                <div class="mt-3 d-flex align-items-center">
+                    <span class="badge bg-danger me-2">
+                        <i class="bi bi-arrow-down me-1"></i>2.8%
+                    </span>
+                    <small class="text-muted">Depuis le mois dernier</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Graphiques -->
+<div class="row g-4 mb-4">
+    <div class="col-12 col-lg-8">
+        <div class="card border-0 h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Ventes mensuelles</h5>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="salesPeriodDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Cette année
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="salesPeriodDropdown">
+                        <li><a class="dropdown-item" href="#">Cette année</a></li>
+                        <li><a class="dropdown-item" href="#">Année précédente</a></li>
+                        <li><a class="dropdown-item" href="#">Tous les temps</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="salesChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="card border-0 h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Catégories de produits</h5>
+                <button class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-three-dots"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <canvas id="categoriesChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alertes de stock bas et commandes récentes -->
+<div class="row g-4 mb-4">
+    <div class="col-12 col-lg-5">
+        <div class="card border-0 h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+                    Produits à faible stock
+                </h5>
+                <span class="badge bg-danger">5 produits</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item py-3">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0 me-3">
+                                    <div class="bg-light rounded" style="width: 48px; height: 48px; overflow: hidden;">
+                                        <img src="/placeholder.svg?height=48&width=48" alt="Casque moto" class="img-fluid">
+                                    </div>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Casque moto</h6>
+                                    <small class="text-danger">Stock: 1 unité</small>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary">Réapprovisionner</button>
+                        </div>
+                    </div>
+                    <div class="list-group-item py-3">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0 me-3">
+                                    <div class="bg-light rounded" style="width: 48px; height: 48px; overflow: hidden;">
+                                        <img src="/placeholder.svg?height=48&width=48" alt="Bougie bosch" class="img-fluid">
+                                    </div>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Bougie bosch</h6>
+                                    <small class="text-danger">Stock: 2 unités</small>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary">Réapprovisionner</button>
+                        </div>
+                    </div>
+                    <div class="list-group-item py-3">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0 me-3">
+                                    <div class="bg-light rounded" style="width: 48px; height: 48px; overflow: hidden;">
+                                        <img src="/placeholder.svg?height=48&width=48" alt="Montre" class="img-fluid">
+                                    </div>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Montre</h6>
+                                    <small class="text-danger">Stock: 2 unités</small>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary">Réapprovisionner</button>
+                        </div>
+                    </div>
+                    <div class="list-group-item py-3">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0 me-3">
+                                    <div class="bg-light rounded" style="width: 48px; height: 48px; overflow: hidden;">
+                                        <img src="/placeholder.svg?height=48&width=48" alt="Huile moteur" class="img-fluid">
+                                    </div>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Huile moteur</h6>
+                                    <small class="text-danger">Stock: 0 unité</small>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary">Réapprovisionner</button>
+                        </div>
+                    </div>
+                    <div class="list-group-item py-3">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0 me-3">
+                                    <div class="bg-light rounded" style="width: 48px; height: 48px; overflow: hidden;">
+                                        <img src="/placeholder.svg?height=48&width=48" alt="Filtre à air" class="img-fluid">
+                                    </div>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Filtre à air</h6>
+                                    <small class="text-danger">Stock: 2 unités</small>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary">Réapprovisionner</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-white text-center">
+                <a href="#" class="text-decoration-none">Voir tous les produits à faible stock</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-7">
+        <div class="card border-0 h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Commandes récentes</h5>
+                <a href="#" class="btn btn-sm btn-outline-secondary">Voir toutes</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Client</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Montant</th>
+                                <th scope="col">Statut</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#ORD-7895</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar me-2 bg-primary text-white">JD</div>
+                                        <div>Jean Dupont</div>
+                                    </div>
+                                </td>
+                                <td>15/04/2023</td>
+                                <td>125,000 Fcfa</td>
+                                <td><span class="badge bg-success">Livré</span></td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="#">Détails</a></li>
+                                            <li><a class="dropdown-item" href="#">Facture</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#ORD-7894</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar me-2 bg-info text-white">ML</div>
+                                        <div>Marie Lefebvre</div>
+                                    </div>
+                                </td>
+                                <td>14/04/2023</td>
+                                <td>78,500 Fcfa</td>
+                                <td><span class="badge bg-warning text-dark">En cours</span></td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="#">Détails</a></li>
+                                            <li><a class="dropdown-item" href="#">Facture</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#ORD-7893</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar me-2 bg-warning text-white">SM</div>
+                                        <div>Sophie Martin</div>
+                                    </div>
+                                </td>
+                                <td>13/04/2023</td>
+                                <td>45,000 Fcfa</td>
+                                <td><span class="badge bg-success">Livré</span></td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="#">Détails</a></li>
+                                            <li><a class="dropdown-item" href="#">Facture</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#ORD-7892</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar me-2 bg-secondary text-white">PB</div>
+                                        <div>Pierre Bertrand</div>
+                                    </div>
+                                </td>
+                                <td>12/04/2023</td>
+                                <td>156,000 Fcfa</td>
+                                <td><span class="badge bg-danger">Annulé</span></td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="#">Détails</a></li>
+                                            <li><a class="dropdown-item" href="#">Facture</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#ORD-7891</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar me-2 bg-success text-white">LT</div>
+                                        <div>Luc Thomas</div>
+                                    </div>
+                                </td>
+                                <td>11/04/2023</td>
+                                <td>89,000 Fcfa</td>
+                                <td><span class="badge bg-primary">Expédié</span></td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="#">Détails</a></li>
+                                            <li><a class="dropdown-item" href="#">Facture</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Produits les plus vendus et nouveaux utilisateurs -->
+<div class="row g-4">
+    <div class="col-12 col-lg-6">
+        <div class="card border-0 h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Produits les plus vendus</h5>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="topProductsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Ce mois
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="topProductsDropdown">
+                        <li><a class="dropdown-item" href="#">Ce mois</a></li>
+                        <li><a class="dropdown-item" href="#">Ce trimestre</a></li>
+                        <li><a class="dropdown-item" href="#">Cette année</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="topProductsChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+        <div class="card border-0 h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Nouveaux utilisateurs</h5>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="newUsersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Cette semaine
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="newUsersDropdown">
+                        <li><a class="dropdown-item" href="#">Cette semaine</a></li>
+                        <li><a class="dropdown-item" href="#">Ce mois</a></li>
+                        <li><a class="dropdown-item" href="#">Ce trimestre</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="newUsersChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script pour les graphiques Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configuration des couleurs
+        const primaryColor = '#dc3545'; // Rouge pour correspondre au thème
+        const secondaryColor = '#6c757d';
+        const successColor = '#198754';
+        const infoColor = '#0dcaf0';
+        const warningColor = '#ffc107';
+        const dangerColor = '#dc3545';
+
+        // Graphique des ventes mensuelles
+        const salesCtx = document.getElementById('salesChart').getContext('2d');
+        const salesChart = new Chart(salesCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'],
+                datasets: [{
+                    label: 'Ventes',
+                    data: [1200000, 1900000, 1500000, 2500000, 2200000, 2800000, 3100000, 2900000, 3300000, 3500000, 3800000, 4200000],
+                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                    borderColor: primaryColor,
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(context.parsed.y);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                if (value >= 1000000) {
+                                    return (value / 1000000).toFixed(1) + 'M';
+                                }
+                                return value;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Graphique des catégories de produits
+        const categoriesCtx = document.getElementById('categoriesChart').getContext('2d');
+        const categoriesChart = new Chart(categoriesCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pièces auto', 'Accessoires', 'Outils', 'Électronique', 'Autres'],
+                datasets: [{
+                    data: [35, 25, 20, 15, 5],
+                    backgroundColor: [primaryColor, infoColor, warningColor, successColor, secondaryColor],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+
+        // Graphique des produits les plus vendus
+        const topProductsCtx = document.getElementById('topProductsChart').getContext('2d');
+        const topProductsChart = new Chart(topProductsCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Casque moto', 'Bougie bosch', 'Montre', 'Huile moteur', 'Filtre à air'],
+                datasets: [{
+                    label: 'Unités vendues',
+                    data: [85, 72, 56, 43, 38],
+                    backgroundColor: primaryColor,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Graphique des nouveaux utilisateurs
+        const newUsersCtx = document.getElementById('newUsersChart').getContext('2d');
+        const newUsersChart = new Chart(newUsersCtx, {
+            type: 'line',
+            data: {
+                labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+                datasets: [{
+                    label: 'Nouveaux utilisateurs',
+                    data: [12, 19, 15, 8, 22, 14, 25],
+                    backgroundColor: 'rgba(13, 202, 240, 0.1)',
+                    borderColor: infoColor,
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
