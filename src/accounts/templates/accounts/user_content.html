@@ -16,26 +16,56 @@
             <div class="card-body text-center pt-4 pb-3">
                 <div class="position-relative mb-3 mx-auto">
                     <div class="avatar-lg mx-auto bg-primary text-white">
-                        JD
+                        {{ user.fullname|slice:":2"|upper }}
                     </div>
                     <span class="position-absolute bottom-0 end-0 translate-middle badge rounded-pill bg-success">
                         <i class="bi bi-circle-fill"></i>
                     </span>
+
+                    {% if user.role != 'admin' %}
                     <div class="user-actions">
-                        <button class="btn btn-sm btn-danger me-1" data-bs-toggle="modal" data-bs-target="#editUserModal">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                        <button class="btn btn-sm btn-light me-1" data-bs-toggle="modal" data-bs-target="#viewUserModal">
-                            <i class="bi bi-eye"></i>
-                        </button>
-                        <button class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#deleteUserModal">
+                            <form method="post" action="{% url 'delete_user' user.id %}">
+                                        {% csrf_token %}
+                        <button class="btn btn-sm btn-danger me-1">
                             <i class="bi bi-trash"></i>
                         </button>
+                            </form>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+
+                                {% if user.role != 'admin' %}
+                                <form method="post" action="{% url 'add_admin' user.id %}">
+                                        {% csrf_token %}
+                                <li><button class="dropdown-item" type="submit">Rendre admin</button></li>
+                                </form>
+                                {% endif %}
+
+
+                                {% if user.role != 'editor' %}
+                                <form method="post" action="{% url 'add_editor' user.id %}">
+                                        {% csrf_token %}
+                                <li><button class="dropdown-item" type="submit">Rendre éditeur</button></li>
+                                </form>
+                                {% endif %}
+
+
+                                {% if user.role != 'viewer' %}
+                                <form method="post" action="{% url 'add_viewer' user.id %}">
+                                        {% csrf_token %}
+                                <li><button class="dropdown-item" type="submit">Rendre Lecteur</button></li>
+                                </form>
+                                {% endif %}
+                            </ul>
+                        </div>
                     </div>
+                    {% endif %}
                 </div>
                 <h5 class="card-title mb-1">{{ user.fullname }}</h5>
                 <p class="text-muted small mb-2">{{ user.email }}</p>
-                <span class="badge bg-primary">
+                <span class="badge {% if user.role == 'admin' %}bg-primary{% elif user.role == 'editor'%}text-dark bg-warning{% else %}bg-success{% endif %}">
                      {% if user.role == 'admin' %}
                             Administrateur
                         {% elif user.role == 'editor' %}
@@ -161,7 +191,6 @@
     </div>
 </div>
 
-<!-- Modal Supprimer Utilisateur -->
 <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -189,7 +218,6 @@
     </div>
 </div>
 
-<!-- Modal Ajouter Utilisateur -->
 <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">

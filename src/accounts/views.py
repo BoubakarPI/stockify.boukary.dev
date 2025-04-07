@@ -1,5 +1,5 @@
 from django.contrib.auth import login, authenticate, logout
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView, CreateView
@@ -22,6 +22,35 @@ class CreateUserByAdminView(View):
             return redirect('accounts')
         return redirect('accounts')
 
+
+def createAdminUser(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        user.role = 'admin'
+        user.save()
+    return redirect('accounts')
+
+def createEditorUser(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        user.role = 'editor'
+        user.save()
+    return redirect('accounts')
+
+
+def createViewerUser(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        user.role = 'viewer'
+        user.save()
+    return redirect('accounts')
+
+
+def deleteUser(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        user.delete()
+    return redirect('accounts')
 
 def signin_view(request):
     if request.method == "POST":
