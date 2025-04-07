@@ -1,11 +1,15 @@
 from decimal import Decimal
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from .models import Product, ActivityLog
 from store.models import Order
+
+from stockify.middleware import min_role_required, RoleRequiredMixin
+
 
 
 class ProductListView(ListView):
@@ -39,11 +43,13 @@ class ProductDetailView(DetailView):
 
 # CRUD
 
-class ProductCreateView(CreateView):
+class ProductCreateView(RoleRequiredMixin, LoginRequiredMixin, CreateView):
     model = Product
     fields = ['name', 'price', 'stock', 'description', 'thumbnail']
     template_name = 'product_content.html'
     success_url = reverse_lazy('products')
+    login_url = '/accounts/signin/'
+    required_role = 'editor'
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -69,11 +75,13 @@ class ProductCreateView(CreateView):
         return response
 
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(RoleRequiredMixin, LoginRequiredMixin,  UpdateView):
     model = Product
     fields = ['name', 'price', 'stock', 'description', 'thumbnail']
     template_name = 'product_content.html'
     success_url = reverse_lazy('products')
+    login_url = '/accounts/signin/'
+    required_role = 'editor'
 
     def form_valid(self, form):
         old_obj = self.get_object()
@@ -115,10 +123,12 @@ class ProductUpdateView(UpdateView):
         return response
 
 
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(RoleRequiredMixin, LoginRequiredMixin, DeleteView):
     model = Product
     template_name = 'product_content.html'
     success_url = reverse_lazy('products')
+    login_url = '/accounts/signin/'
+    required_role = 'editor'
 
     def delete(self, request, *args, **kwargs):
         obj = self.get_object()
@@ -140,7 +150,7 @@ class ProductDeleteView(DeleteView):
         )
         return super().delete(request, *args, **kwargs)
 
-
+@min_role_required('editor')
 def validate_commande(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     if request.method == 'POST':

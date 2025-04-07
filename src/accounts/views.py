@@ -1,4 +1,5 @@
 from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
@@ -6,6 +7,7 @@ from django.views.generic import ListView, CreateView
 
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 from .models import User
+from stockify.middleware import min_role_required
 
 
 # Create your views here.
@@ -14,15 +16,18 @@ class AccountListView(ListView):
     model = User
     template_name = 'accounts/user_content.html'
 
-class CreateUserByAdminView(View):
-    def post(self, request, *args, **kwargs):
+
+@login_required
+def createUserByAdmin(request):
+    if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            return redirect('accounts')
-        return redirect('accounts')
+    return redirect('accounts')
 
 
+
+@min_role_required('admin')
 def createAdminUser(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
@@ -30,6 +35,7 @@ def createAdminUser(request, user_id):
         user.save()
     return redirect('accounts')
 
+@min_role_required('admin')
 def createEditorUser(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
@@ -38,6 +44,7 @@ def createEditorUser(request, user_id):
     return redirect('accounts')
 
 
+@min_role_required('admin')
 def createViewerUser(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
@@ -46,6 +53,7 @@ def createViewerUser(request, user_id):
     return redirect('accounts')
 
 
+@min_role_required('admin')
 def deleteUser(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
@@ -78,6 +86,7 @@ def signup_view(request):
     return render(request, "accounts/signup.html", {"form": form})
 
 
+@login_required
 def logout_user(request):
     logout(request)
     return redirect('index')

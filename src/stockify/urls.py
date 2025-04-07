@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 from . import settings
-from .views import index, logs, export_products_csv, export_orders_csv
+from .views import index, logs, export_products_csv, export_orders_csv, unauthorized_view
 
 urlpatterns = [
     path('', index, name="index"),
@@ -16,4 +16,6 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
+    path('unauthorized/', unauthorized_view, name='unauthorized'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

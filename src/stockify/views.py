@@ -1,6 +1,7 @@
 import csv
 import json
 
+from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, F, ExpressionWrapper, DecimalField, Count
 from django.db.models.functions import TruncMonth
 from django.http import HttpResponse
@@ -79,6 +80,8 @@ def logs(request):
     return render(request, 'logs.html', context={'logs': logs,})
 
 
+
+@login_required
 def export_products_csv(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="stockify-products.csv"'
@@ -91,6 +94,8 @@ def export_products_csv(request):
 
     return response
 
+
+@login_required
 def export_orders_csv(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="stockify-orders.csv"'
@@ -113,3 +118,7 @@ def export_orders_csv(request):
         ])
 
     return response
+
+
+def unauthorized_view(request):
+    return render(request, 'unauthorized.html')

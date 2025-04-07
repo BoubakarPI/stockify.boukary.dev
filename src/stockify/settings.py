@@ -131,3 +131,5 @@ AUTH_USER_MODEL = "accounts.User"
 
 MEDIA_URL = "/content/"
 MEDIA_ROOT = BASE_DIR / "medias"
+
+LOGIN_URL = '/accounts/signin/'
