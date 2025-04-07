@@ -6,7 +6,7 @@ from inventory.models import Product
 class Order(models.Model):
     STATUT_CHOICES = [
         ('pending', 'En entente'),
-        ('paid', 'Payé'),
+        ('validated', 'Validée'),
     ]
     order_date = models.DateTimeField(auto_now_add=True)
     statut = models.CharField(max_length=20, choices=STATUT_CHOICES, default='pending')
@@ -15,3 +15,8 @@ class Order(models.Model):
     phone=models.CharField(max_length=18, null=True)
     address=models.CharField(max_length=128, null=True)
     fullname=models.CharField(max_length=128, null=True)
+
+
+    @property
+    def total_price(self):
+        return self.product.price * self.quantity

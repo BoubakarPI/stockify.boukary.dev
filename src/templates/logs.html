@@ -1,0 +1,193 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!-- Tableau des logs -->
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">
+            <i class="bi bi-clock-history me-2"></i>Historique des activités
+        </h5>
+        <span class="badge bg-primary" id="logCount">{{ logs|length }} entrées</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" class="sortable" data-sort="date">
+                            Date <i class="bi bi-arrow-down-up text-muted ms-1"></i>
+                        </th>
+                        <th scope="col" class="sortable" data-sort="user">
+                            Utilisateur <i class="bi bi-arrow-down-up text-muted ms-1"></i>
+                        </th>
+                        <th scope="col" class="sortable" data-sort="action">
+                            Action <i class="bi bi-arrow-down-up text-muted ms-1"></i>
+                        </th>
+                        <th scope="col" class="sortable" data-sort="item">
+                            Élément <i class="bi bi-arrow-down-up text-muted ms-1"></i>
+                        </th>
+                        <th scope="col">Détails</th>
+                        <th scope="col">IP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Exemple de log: Ajout de produit -->
+                    {% for log in logs %}
+                    <tr>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <span>{{ log.date_time }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar me-2 bg-primary text-white">JD</div>
+                                <div>{{ log.user_fullname }}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge {% if log.action == 'add' %} bg-success{% elif log.action == 'update' %}text-dark bg-warning{% else %}bg-danger{% endif %}">
+                                        {% if log.action == 'add' %}
+                                            Ajout
+                                        {% elif log.action == 'update' %}
+                                            Modification
+                                        {% else %}
+                                            Suppression
+                                        {% endif %}
+                                    </span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <span>{{ log.object_name }}</span>
+                                    <small class="d-block text-muted">N° #{{ log.object_id }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="text-muted small">{{ log.message }}</span>
+                        </td>
+                        <td>
+                            <p>{{ log.ip_address }}</p>
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+</div>
+
+<!-- Modal de détail de log / TODO -->
+<div class="modal fade" id="logDetailModal" tabindex="-1" aria-labelledby="logDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="logDetailModalLabel">Détails de l'activité</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-2">Informations générales</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <th style="width: 40%">ID de l'activité:</th>
+                                <td id="logId">LOG-12345</td>
+                            </tr>
+                            <tr>
+                                <th>Date et heure:</th>
+                                <td id="logDateTime">15/04/2023 14:32:45</td>
+                            </tr>
+                            <tr>
+                                <th>Utilisateur:</th>
+                                <td id="logUser">Jean Dupont (admin@example.com)</td>
+                            </tr>
+                            <tr>
+                                <th>IP:</th>
+                                <td id="logIp">192.168.1.1</td>
+                            </tr>
+                            <tr>
+                                <th>Action:</th>
+                                <td id="logAction"><span class="badge bg-success">Ajout</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-2">Élément concerné</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <th style="width: 40%">Type:</th>
+                                <td id="logItemType">Produit</td>
+                            </tr>
+                            <tr>
+                                <th>ID:</th>
+                                <td id="logItemId">12345</td>
+                            </tr>
+                            <tr>
+                                <th>Nom:</th>
+                                <td id="logItemName">Casque moto</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <h6 class="text-muted mb-3">Détails des modifications</h6>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="logChangesTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Champ</th>
+                                <th>Ancienne valeur</th>
+                                <th>Nouvelle valeur</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Nom</td>
+                                <td>-</td>
+                                <td>Casque moto</td>
+                            </tr>
+                            <tr>
+                                <td>Prix</td>
+                                <td>-</td>
+                                <td>45000 Fcfa</td>
+                            </tr>
+                            <tr>
+                                <td>Stock</td>
+                                <td>-</td>
+                                <td>15</td>
+                            </tr>
+                            <tr>
+                                <td>Description</td>
+                                <td>-</td>
+                                <td>Casque de moto de haute qualité avec protection intégrale</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="alert alert-info mt-3">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <span id="logNote">Nouveau produit ajouté au catalogue par Jean Dupont</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-primary" id="printLogDetail">
+                    <i class="bi bi-printer me-1"></i> Imprimer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

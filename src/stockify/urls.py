@@ -19,10 +19,12 @@ from django.contrib import admin
 from django.urls import path, include
 
 from . import settings
-from .views import index
+from .views import index, logs
 
 urlpatterns = [
     path('', index, name="index"),
+    path('logs/', logs, name="logs"),
+    path('store/', include('store.urls')),
     path('products/', include('inventory.urls')),
     path('accounts/', include('accounts.urls')),
     path('accounts/', include('django.contrib.auth.urls')),

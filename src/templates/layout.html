@@ -31,7 +31,7 @@
         }
         .sidebar .nav-link.active {
             background-color: #e9ecef;
-            color: #0d6efd;
+            color: #dc3545;;
             font-weight: 500;
         }
         .sidebar .nav-link i {
@@ -191,8 +191,13 @@
 <!-- Sidebar -->
 <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
     <div class="position-sticky pt-3">
-        <div class="d-flex align-items-center justify-content-center mb-4 px-3">
-            <h5 class="fw-bold text-primary mb-0">Administration</h5>
+        <div class="d-flex text-danger mb-4 px-3">
+            <a class="navbar-brand" href="{% url 'index' %}">
+                <i class="bi bi-shop me-2"></i>Stockify
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
         </div>
         <ul class="nav flex-column">
             <li class="nav-item">
@@ -214,9 +219,9 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {% if request.resolver_match.url_name == 'orders' %}active{% endif %}" href="{% url 'orders' %}">
+                <a class="nav-link {% if request.resolver_match.url_name == 'logs' %}active{% endif %}" href="{% url 'logs' %}">
                     <i class="bi bi-cart"></i>
-                    Commandes
+                    Logs
                 </a>
             </li>
         </ul>

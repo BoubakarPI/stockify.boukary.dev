@@ -7,9 +7,9 @@
         <button class="btn btn-outline-secondary me-2">
             <i class="bi bi-download me-1"></i> Exporter
         </button>
-        <button class="btn btn-danger">
+        <a href="{% url 'index' %}" class="btn btn-danger">
             <i class="bi bi-arrow-repeat me-1"></i> Actualiser
-        </button>
+        </a>
     </div>
 </div>
 
@@ -26,7 +26,7 @@
                     </div>
                     <div>
                         <h6 class="card-subtitle mb-1 text-muted">Produits</h6>
-                        <h2 class="card-title mb-0 h3">124</h2>
+                        <h2 class="card-title mb-0 h3">{{ products|length }}</h2>
                     </div>
                 </div>
                 <div class="mt-3 d-flex align-items-center">
@@ -50,7 +50,7 @@
                     </div>
                     <div>
                         <h6 class="card-subtitle mb-1 text-muted">Utilisateurs</h6>
-                        <h2 class="card-title mb-0 h3">1,254</h2>
+                        <h2 class="card-title mb-0 h3">{{ users|length }}</h2>
                     </div>
                 </div>
                 <div class="mt-3 d-flex align-items-center">
@@ -74,7 +74,7 @@
                     </div>
                     <div>
                         <h6 class="card-subtitle mb-1 text-muted">Commandes</h6>
-                        <h2 class="card-title mb-0 h3">845</h2>
+                        <h2 class="card-title mb-0 h3">{{ orders|length }}</h2>
                     </div>
                 </div>
                 <div class="mt-3 d-flex align-items-center">
@@ -98,7 +98,7 @@
                     </div>
                     <div>
                         <h6 class="card-subtitle mb-1 text-muted">Revenus</h6>
-                        <h2 class="card-title mb-0 h3">12.5M Fcfa</h2>
+                        <h2 class="card-title mb-0 h3">{{ income }} Fcfa</h2>
                     </div>
                 </div>
                 <div class="mt-3 d-flex align-items-center">
@@ -118,16 +118,6 @@
         <div class="card border-0 h-100">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0">Ventes mensuelles</h5>
-                <div class="dropdown">
-                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="salesPeriodDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        Cette année
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="salesPeriodDropdown">
-                        <li><a class="dropdown-item" href="#">Cette année</a></li>
-                        <li><a class="dropdown-item" href="#">Année précédente</a></li>
-                        <li><a class="dropdown-item" href="#">Tous les temps</a></li>
-                    </ul>
-                </div>
             </div>
             <div class="card-body">
                 <canvas id="salesChart" height="250"></canvas>
@@ -153,102 +143,40 @@
 <!-- Alertes de stock bas et commandes récentes -->
 <div class="row g-4 mb-4">
     <div class="col-12 col-lg-5">
-        <div class="card border-0 h-100">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-exclamation-triangle text-warning me-2"></i>
-                    Produits à faible stock
-                </h5>
-                <span class="badge bg-danger">5 produits</span>
-            </div>
-            <div class="card-body p-0">
-                <div class="list-group list-group-flush">
-                    <div class="list-group-item py-3">
-                        <div class="d-flex w-100 justify-content-between align-items-center">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0 me-3">
-                                    <div class="bg-light rounded" style="width: 48px; height: 48px; overflow: hidden;">
-                                        <img src="/placeholder.svg?height=48&width=48" alt="Casque moto" class="img-fluid">
-                                    </div>
-                                </div>
-                                <div>
-                                    <h6 class="mb-0">Casque moto</h6>
-                                    <small class="text-danger">Stock: 1 unité</small>
-                                </div>
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+    <h5 class="card-title mb-0">
+        <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+        Produits à faible stock
+    </h5>
+    <span class="badge bg-danger">{{ low_stock_products|length }} produits</span>
+</div>
+
+<div class="card-body p-0">
+    <div class="list-group list-group-flush">
+        {% for product in low_stock_products %}
+            <div class="list-group-item py-3">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 me-3">
+                            <div class="bg-light rounded" style="width: 48px; height: 48px; overflow: hidden;">
+                                <img src="{{ product.thumbnail.url }}" alt="{{ product.name }}" class="img-fluid">
                             </div>
-                            <button class="btn btn-sm btn-outline-primary">Réapprovisionner</button>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">{{ product.name }}</h6>
+                            <small class="text-danger">Stock: {{ product.stock }} unité{{ product.stock|pluralize }}</small>
                         </div>
                     </div>
-                    <div class="list-group-item py-3">
-                        <div class="d-flex w-100 justify-content-between align-items-center">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0 me-3">
-                                    <div class="bg-light rounded" style="width: 48px; height: 48px; overflow: hidden;">
-                                        <img src="/placeholder.svg?height=48&width=48" alt="Bougie bosch" class="img-fluid">
-                                    </div>
-                                </div>
-                                <div>
-                                    <h6 class="mb-0">Bougie bosch</h6>
-                                    <small class="text-danger">Stock: 2 unités</small>
-                                </div>
-                            </div>
-                            <button class="btn btn-sm btn-outline-primary">Réapprovisionner</button>
-                        </div>
-                    </div>
-                    <div class="list-group-item py-3">
-                        <div class="d-flex w-100 justify-content-between align-items-center">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0 me-3">
-                                    <div class="bg-light rounded" style="width: 48px; height: 48px; overflow: hidden;">
-                                        <img src="/placeholder.svg?height=48&width=48" alt="Montre" class="img-fluid">
-                                    </div>
-                                </div>
-                                <div>
-                                    <h6 class="mb-0">Montre</h6>
-                                    <small class="text-danger">Stock: 2 unités</small>
-                                </div>
-                            </div>
-                            <button class="btn btn-sm btn-outline-primary">Réapprovisionner</button>
-                        </div>
-                    </div>
-                    <div class="list-group-item py-3">
-                        <div class="d-flex w-100 justify-content-between align-items-center">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0 me-3">
-                                    <div class="bg-light rounded" style="width: 48px; height: 48px; overflow: hidden;">
-                                        <img src="/placeholder.svg?height=48&width=48" alt="Huile moteur" class="img-fluid">
-                                    </div>
-                                </div>
-                                <div>
-                                    <h6 class="mb-0">Huile moteur</h6>
-                                    <small class="text-danger">Stock: 0 unité</small>
-                                </div>
-                            </div>
-                            <button class="btn btn-sm btn-outline-primary">Réapprovisionner</button>
-                        </div>
-                    </div>
-                    <div class="list-group-item py-3">
-                        <div class="d-flex w-100 justify-content-between align-items-center">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0 me-3">
-                                    <div class="bg-light rounded" style="width: 48px; height: 48px; overflow: hidden;">
-                                        <img src="/placeholder.svg?height=48&width=48" alt="Filtre à air" class="img-fluid">
-                                    </div>
-                                </div>
-                                <div>
-                                    <h6 class="mb-0">Filtre à air</h6>
-                                    <small class="text-danger">Stock: 2 unités</small>
-                                </div>
-                            </div>
-                            <button class="btn btn-sm btn-outline-primary">Réapprovisionner</button>
-                        </div>
-                    </div>
+                    <a href="{% url 'products' %}"  class="btn btn-sm btn-outline-primary">Réapprovisionner</a>
                 </div>
             </div>
-            <div class="card-footer bg-white text-center">
-                <a href="#" class="text-decoration-none">Voir tous les produits à faible stock</a>
+        {% empty %}
+            <div class="list-group-item py-3 text-center">
+                <small class="text-muted">Aucun produit à faible stock</small>
             </div>
-        </div>
+        {% endfor %}
+    </div>
+</div>
     </div>
 
     <div class="col-12 col-lg-7">
@@ -271,121 +199,40 @@
                             </tr>
                         </thead>
                         <tbody>
+
+                        {% for order in orders %}
                             <tr>
-                                <td>#ORD-7895</td>
+                                <td>#ORD-{{order.id}}</td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar me-2 bg-primary text-white">JD</div>
-                                        <div>Jean Dupont</div>
+                                        <div class="avatar me-2 bg-primary text-white">{{ order.fullname|slice:":2"|upper }}</div>
+                                        <div>{{ order.fullname }}</div>
                                     </div>
                                 </td>
-                                <td>15/04/2023</td>
-                                <td>125,000 Fcfa</td>
-                                <td><span class="badge bg-success">Livré</span></td>
+                                <td>{{ order.order_date }}</td>
+                                <td>{{ order.total_price }} Fcfa</td>
                                 <td>
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="bi bi-three-dots-vertical"></i>
+                                    <span class="badge {% if order.statut == 'pending' %}text-dark bg-warning{% else %}bg-success{% endif %}">
+                                        {% if order.statut == 'pending' %}
+                                            En cours
+                                        {% else %}
+                                            Validée
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    <form method="post" action="{% url 'activate_order' order.id %}">
+                                        {% csrf_token %}
+                                        <button {% if order.statut == 'validated' %}disabled{% endif %} type="submit" class="btn btn-sm btn-success">
+                                            <i class="bi bi-check-circle me-1"></i> Valider
                                         </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="#">Détails</a></li>
-                                            <li><a class="dropdown-item" href="#">Facture</a></li>
-                                        </ul>
-                                    </div>
+                                    </form>
                                 </td>
+
                             </tr>
-                            <tr>
-                                <td>#ORD-7894</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar me-2 bg-info text-white">ML</div>
-                                        <div>Marie Lefebvre</div>
-                                    </div>
-                                </td>
-                                <td>14/04/2023</td>
-                                <td>78,500 Fcfa</td>
-                                <td><span class="badge bg-warning text-dark">En cours</span></td>
-                                <td>
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="bi bi-three-dots-vertical"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="#">Détails</a></li>
-                                            <li><a class="dropdown-item" href="#">Facture</a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#ORD-7893</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar me-2 bg-warning text-white">SM</div>
-                                        <div>Sophie Martin</div>
-                                    </div>
-                                </td>
-                                <td>13/04/2023</td>
-                                <td>45,000 Fcfa</td>
-                                <td><span class="badge bg-success">Livré</span></td>
-                                <td>
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="bi bi-three-dots-vertical"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="#">Détails</a></li>
-                                            <li><a class="dropdown-item" href="#">Facture</a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#ORD-7892</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar me-2 bg-secondary text-white">PB</div>
-                                        <div>Pierre Bertrand</div>
-                                    </div>
-                                </td>
-                                <td>12/04/2023</td>
-                                <td>156,000 Fcfa</td>
-                                <td><span class="badge bg-danger">Annulé</span></td>
-                                <td>
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="bi bi-three-dots-vertical"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="#">Détails</a></li>
-                                            <li><a class="dropdown-item" href="#">Facture</a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#ORD-7891</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar me-2 bg-success text-white">LT</div>
-                                        <div>Luc Thomas</div>
-                                    </div>
-                                </td>
-                                <td>11/04/2023</td>
-                                <td>89,000 Fcfa</td>
-                                <td><span class="badge bg-primary">Expédié</span></td>
-                                <td>
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="bi bi-three-dots-vertical"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="#">Détails</a></li>
-                                            <li><a class="dropdown-item" href="#">Facture</a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
+
+                        {% endfor %}
+
                         </tbody>
                     </table>
                 </div>
@@ -394,50 +241,6 @@
     </div>
 </div>
 
-<!-- Produits les plus vendus et nouveaux utilisateurs -->
-<div class="row g-4">
-    <div class="col-12 col-lg-6">
-        <div class="card border-0 h-100">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">Produits les plus vendus</h5>
-                <div class="dropdown">
-                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="topProductsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        Ce mois
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="topProductsDropdown">
-                        <li><a class="dropdown-item" href="#">Ce mois</a></li>
-                        <li><a class="dropdown-item" href="#">Ce trimestre</a></li>
-                        <li><a class="dropdown-item" href="#">Cette année</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="card-body">
-                <canvas id="topProductsChart" height="250"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-12 col-lg-6">
-        <div class="card border-0 h-100">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">Nouveaux utilisateurs</h5>
-                <div class="dropdown">
-                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="newUsersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        Cette semaine
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="newUsersDropdown">
-                        <li><a class="dropdown-item" href="#">Cette semaine</a></li>
-                        <li><a class="dropdown-item" href="#">Ce mois</a></li>
-                        <li><a class="dropdown-item" href="#">Ce trimestre</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="card-body">
-                <canvas id="newUsersChart" height="250"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Script pour les graphiques Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -459,7 +262,7 @@
                 labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'],
                 datasets: [{
                     label: 'Ventes',
-                    data: [1200000, 1900000, 1500000, 2500000, 2200000, 2800000, 3100000, 2900000, 3300000, 3500000, 3800000, 4200000],
+                    data: {{ monthly_sales|safe }},
                     backgroundColor: 'rgba(220, 53, 69, 0.1)',
                     borderColor: primaryColor,
                     borderWidth: 2,

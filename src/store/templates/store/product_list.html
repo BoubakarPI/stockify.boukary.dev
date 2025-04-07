@@ -64,22 +64,8 @@
                     <img src="{{ product.thumbnail.url }}" class="card-img-top" alt="{{ product.name }}">
                 </div>
 
-                {% if product.is_new %}
-                <span class="position-absolute top-0 start-0 badge bg-success m-2">Nouveau</span>
-                {% endif %}
 
-                {% if product.discount > 0 %}
-                <span class="position-absolute top-0 end-0 badge bg-danger m-2">-{{ product.discount }}%</span>
-                {% endif %}
 
-                <div class="position-absolute top-0 end-0 m-3 product-actions">
-                    <button class="btn btn-sm btn-light rounded-circle shadow-sm me-1" title="Ajouter aux favoris">
-                        <i class="bi bi-heart"></i>
-                    </button>
-                    <button class="btn btn-sm btn-light rounded-circle shadow-sm" title="Aperçu rapide">
-                        <i class="bi bi-eye"></i>
-                    </button>
-                </div>
             </div>
 
             <div class="card-body">
@@ -93,7 +79,7 @@
                 </div>
 
                 <h5 class="card-title">
-                    <a href="{% url 'store:product_detail' product.id %}" class="text-decoration-none text-dark stretched-link">{{ product.name }}</a>
+                    {{ product.name }}
                 </h5>
 
                 <p class="card-text text-muted small mb-3">
@@ -106,7 +92,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="card-footer bg-white border-top-0 d-flex justify-content-between">
                 <a href="{% url 'store:product_detail' product.id %}" class="btn btn-outline-primary">Détails</a>
                 <a href="{% url 'store:add_order' product.id %}" class="btn btn-primary">
