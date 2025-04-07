@@ -136,8 +136,17 @@ git clone https://github.com/BoubakarPI/stockify.boukary.dev.git
 cd stockify.boukary.dev/src/
 
 # Créer un environnement virtuel
-python -m venv venv
-source venv/bin/activate
+- **Sur Linux (ou macOS)** :
+  ```bash
+  python -m venv venv
+  source venv/bin/activate
+  ```
+
+- **Sur Windows** :
+  ```bash
+  python -m venv venv
+  .\venv\Scripts\activate
+  ```
 
 # Installer les dépendances
 pip install -r ../requirements.txt
