@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Gestion des Produits</h2>
+    <a href="" class="btn btn-primary mb-3">Ajouter un produit</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Quantité</th>
+                <th>Prix</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in product_list %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>{{ product.quantity }}</td>
+                <td>{{ product.price }}</td>
+                <td>
+                    <a href="" class="btn btn-warning">Modifier</a>
+                    <a href="" class="btn btn-danger">Supprimer</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
