@@ -1,3 +1,5 @@
+import csv
+
 from django.db.models import Sum, F, ExpressionWrapper, DecimalField
 from django.db.models.functions import TruncMonth
 from django.http import HttpResponse
@@ -51,7 +53,43 @@ def index(request):
     }
     return render(request, 'dashboard.html', context)
 
+
 def logs(request):
     logs = ActivityLog.objects.all()
     return render(request, 'logs.html', context={'logs': logs,})
 
+
+def export_products_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="stockify-products.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Nom', 'Prix', 'Stock', 'Description'])
+
+    for product in Product.objects.all():
+        writer.writerow([product.name, product.price, product.stock, product.description])
+
+    return response
+
+def export_orders_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="stockify-orders.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Client', 'Telephone', 'Adresse', 'Produit', 'Quantite', 'Prix unitaire', 'Montant total', 'Date', 'Statut'])
+
+    for order in Order.objects.select_related('product'):
+        total = order.product.price * order.quantity
+        writer.writerow([
+            order.fullname,
+            order.phone,
+            order.address,
+            order.product.name,
+            order.quantity,
+            order.product.price,
+            total,
+            order.order_date,
+            order.statut,
+        ])
+
+    return response

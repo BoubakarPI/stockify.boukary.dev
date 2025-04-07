@@ -4,9 +4,9 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="h4 mb-0">Tableau de bord</h2>
     <div>
-        <button class="btn btn-outline-secondary me-2">
+        <a href="{% url 'export_products_csv' %}" class="btn btn-outline-secondary me-2">
             <i class="bi bi-download me-1"></i> Exporter
-        </button>
+        </a>
         <a href="{% url 'index' %}" class="btn btn-danger">
             <i class="bi bi-arrow-repeat me-1"></i> Actualiser
         </a>
@@ -183,7 +183,7 @@
         <div class="card border-0 h-100">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0">Commandes récentes</h5>
-                <a href="#" class="btn btn-sm btn-outline-secondary">Voir toutes</a>
+                <a href="{% url 'export_orders_csv' %}" class="btn btn-sm btn-outline-secondary">Exporter les commandes</a>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
