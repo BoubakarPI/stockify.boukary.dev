@@ -1,0 +1,235 @@
+{% extends 'store_layout.html' %}
+
+{% block title %}Nos Produits | Stockify{% endblock %}
+
+
+
+{% block contenu %}
+<div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+    <div>
+        <h2 class="h4 mb-0">
+            Tous les produits
+        </h2>
+        <p class="text-muted mb-0">{{ products.paginator.count }} produits trouvés</p>
+    </div>
+
+    <div class="d-flex align-items-center mt-3 mt-md-0">
+                <div class="btn-group" role="group" aria-label="Affichage">
+            <button type="button" class="btn btn-outline-secondary active" id="gridView">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+            </button>
+            <button type="button" class="btn btn-outline-secondary" id="listView">
+                <i class="bi bi-list-ul"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="mb-4">
+    <form class="d-flex" method="GET">
+        <div class="input-group">
+            <input class="form-control" type="search" name="name" placeholder="Rechercher un produit..." aria-label="Recherche" value="{{ request.GET.name }}">
+            <button class="btn btn-primary" type="submit">
+                <i class="bi bi-search me-1"></i> Rechercher
+            </button>
+        </div>
+    </form>
+</div>
+
+{% if request.GET.name %}
+<div class="alert alert-info mb-4">
+    <i class="bi bi-info-circle me-2"></i> Résultats de recherche pour : <strong>{{ request.GET.name }}</strong>
+    <a href="{% url 'store:index' %}" class="float-end text-decoration-none">
+        <i class="bi bi-x-circle"></i> Effacer
+    </a>
+</div>
+{% endif %}
+
+<div class="row g-4" id="productsGrid">
+    {% for product in product_list %}
+    <div class="col-sm-6 col-lg-4">
+        <div class="card h-100 product-card border-0 shadow-sm">
+            <div class="position-relative">
+                <div class="product-img-container">
+                    <img src="{{ product.thumbnail.url }}" class="card-img-top" alt="{{ product.name }}">
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+
+                    {% if product.stock > 0 %}
+                    <span class="badge bg-success">En stock</span>
+                    {% else %}
+                    <span class="badge bg-danger">Rupture</span>
+                    {% endif %}
+                </div>
+
+                <h5 class="card-title">
+                    {{ product.name }}
+                </h5>
+
+                <p class="card-text text-muted small mb-3">
+                    {{ product.description|truncatechars:80 }}
+                </p>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="fw-bold">{{ product.price }} Fcfa</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-white border-top-0 d-flex justify-content-between">
+                <a href="{% url 'store:product_detail' product.id %}" class="btn btn-outline-primary">Détails</a>
+                <a href="{% url 'store:add_order' product.id %}" class="btn btn-primary">
+                    <i class="bi bi-cart-plus me-1"></i> Commander
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-warning text-center py-5">
+            <i class="bi bi-exclamation-triangle display-4 d-block mb-3"></i>
+            <h4>Aucun produit trouvé</h4>
+            <p class="mb-0">
+                {% if request.GET.name %}
+                Aucun produit ne correspond à votre recherche "{{ request.GET.name }}".
+                {% endif %}
+            </p>
+            <div class="mt-4">
+                <a href="{% url 'store:index' %}" class="btn btn-outline-primary">Voir tous les produits</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="list-group d-none" id="productsList">
+    {% for product in product_list %}
+    <div class="list-group-item p-3 border-0 shadow-sm rounded mb-3">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <div class="position-relative">
+                    <img src="{{ product.thumbnail.url }}" class="img-fluid rounded" alt="{{ product.name }}">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h5>
+                    <a href="{% url 'store:product_detail' product.id %}" class="text-decoration-none text-dark">{{ product.name }}</a>
+                </h5>
+                <p class="text-muted mb-2">{{ product.description|truncatechars:150 }}</p>
+                <div>
+                    {% if product.stock > 0 %}
+                    <span class="badge bg-success">En stock</span>
+                    {% else %}
+                    <span class="badge bg-danger">Rupture</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-3 d-flex flex-column justify-content-between">
+                <div>
+                    <span class="fw-bold fs-5">{{ product.price }} Fcfa</span>
+                </div>
+                <div class="mt-auto">
+                    <a href="{% url 'store:product_detail' product.id %}" class="btn btn-outline-primary btn-sm mb-2 w-100">Détails</a>
+                    <a href="{% url 'store:add_order' product.id %}" class="btn btn-primary btn-sm w-100">
+                        <i class="bi bi-cart-plus me-1"></i> Commander
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="alert alert-warning text-center py-5">
+        <i class="bi bi-exclamation-triangle display-4 d-block mb-3"></i>
+        <h4>Aucun produit trouvé</h4>
+        <p class="mb-0">
+            {% if request.GET.recherche %}
+            Aucun produit ne correspond à votre recherche "{{ request.GET.recherche }}".
+            {% else %}
+            Aucun produit n'est disponible dans cette catégorie pour le moment.
+            {% endif %}
+        </p>
+        <div class="mt-4">
+            <a href="{% url 'store:index' %}" class="btn btn-outline-primary">Voir tous les produits</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if products.has_other_pages %}
+<nav class="mt-5" aria-label="Navigation des pages">
+    <ul class="pagination justify-content-center">
+        {% if products.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page=1{% if request.GET.recherche %}&recherche={{ request.GET.recherche }}{% endif %}" aria-label="Première">
+                <span aria-hidden="true">&laquo;&laquo;</span>
+                <span class="visually-hidden">Première</span>
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ products.previous_page_number }}{% if request.GET.recherche %}&recherche={{ request.GET.recherche }}{% endif %}" aria-label="Précédente">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="visually-hidden">Précédente</span>
+            </a>
+        </li>
+        {% endif %}
+
+        {% for num in products.paginator.page_range %}
+            {% if products.number == num %}
+            <li class="page-item active" aria-current="page">
+                <span class="page-link">{{ num }}</span>
+            </li>
+            {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ num }}{% if request.GET.recherche %}&recherche={{ request.GET.recherche }}{% endif %}">{{ num }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if products.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ products.next_page_number }}{% if request.GET.recherche %}&recherche={{ request.GET.recherche }}{% endif %}" aria-label="Suivante">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="visually-hidden">Suivante</span>
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ products.paginator.num_pages }}{% if request.GET.recherche %}&recherche={{ request.GET.recherche }}{% endif %}" aria-label="Dernière">
+                <span aria-hidden="true">&raquo;&raquo;</span>
+                <span class="visually-hidden">Dernière</span>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+<!-- Script pour basculer entre l'affichage grille et liste -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const gridView = document.getElementById('gridView');
+        const listView = document.getElementById('listView');
+        const productsGrid = document.getElementById('productsGrid');
+        const productsList = document.getElementById('productsList');
+
+        if (gridView && listView && productsGrid && productsList) {
+            gridView.addEventListener('click', function() {
+                gridView.classList.add('active');
+                listView.classList.remove('active');
+                productsGrid.classList.remove('d-none');
+                productsList.classList.add('d-none');
+            });
+
+            listView.addEventListener('click', function() {
+                listView.classList.add('active');
+                gridView.classList.remove('active');
+                productsList.classList.remove('d-none');
+                productsGrid.classList.add('d-none');
+            });
+        }
+    });
+</script>
+{% endblock %}

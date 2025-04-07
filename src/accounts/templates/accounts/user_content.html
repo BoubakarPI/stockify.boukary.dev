@@ -1,0 +1,316 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h4 mb-0">Utilisateurs</h2>
+    <button type="button" class="btn btn-danger d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addUserModal">
+        <i class="bi bi-plus-lg me-2"></i> Ajouter un utilisateur
+    </button>
+</div>
+
+<div class="row g-4">
+
+    {% for user in user_list %}
+    <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+        <div class="card user-card h-100 position-relative">
+            <div class="card-body text-center pt-4 pb-3">
+                <div class="position-relative mb-3 mx-auto">
+                    <div class="avatar-lg mx-auto bg-primary text-white">
+                        {{ user.fullname|slice:":2"|upper }}
+                    </div>
+                    <span class="position-absolute bottom-0 end-0 translate-middle badge rounded-pill bg-success">
+                        <i class="bi bi-circle-fill"></i>
+                    </span>
+
+                    {% if user.role != 'admin' %}
+                    <div class="user-actions">
+                            <form method="post" action="{% url 'delete_user' user.id %}">
+                                        {% csrf_token %}
+                        <button class="btn btn-sm btn-danger me-1">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                            </form>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+
+                                {% if user.role != 'admin' %}
+                                <form method="post" action="{% url 'add_admin' user.id %}">
+                                        {% csrf_token %}
+                                <li><button class="dropdown-item" type="submit">Rendre admin</button></li>
+                                </form>
+                                {% endif %}
+
+
+                                {% if user.role != 'editor' %}
+                                <form method="post" action="{% url 'add_editor' user.id %}">
+                                        {% csrf_token %}
+                                <li><button class="dropdown-item" type="submit">Rendre éditeur</button></li>
+                                </form>
+                                {% endif %}
+
+
+                                {% if user.role != 'viewer' %}
+                                <form method="post" action="{% url 'add_viewer' user.id %}">
+                                        {% csrf_token %}
+                                <li><button class="dropdown-item" type="submit">Rendre Lecteur</button></li>
+                                </form>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <h5 class="card-title mb-1">{{ user.fullname }}</h5>
+                <p class="text-muted small mb-2">{{ user.email }}</p>
+                <span class="badge {% if user.role == 'admin' %}bg-primary{% elif user.role == 'editor'%}text-dark bg-warning{% else %}bg-success{% endif %}">
+                     {% if user.role == 'admin' %}
+                            Administrateur
+                        {% elif user.role == 'editor' %}
+                            Editeur
+                        {% else %}
+                            Lecteur
+                        {% endif %}
+                </span>
+            </div>
+            <div class="card-footer bg-white text-center">
+                <small class="text-muted">Dernière connexion: {{ user.last_login }}</small>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Modal Voir Utilisateur -->
+<div class="modal fade" id="viewUserModal" tabindex="-1" aria-labelledby="viewUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewUserModalLabel">Détails de l'utilisateur</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4 text-center mb-4 mb-md-0">
+                        <div class="avatar-xl mx-auto bg-primary text-white mb-3">
+                            JD
+                        </div>
+                        <h4>Jean Dupont</h4>
+                        <span class="badge bg-primary mb-2">Administrateur</span>
+                        <p class="text-muted">Membre depuis: 01/01/2023</p>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <h6 class="fw-bold">Informations personnelles</h6>
+                            <hr>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Email:</div>
+                                <div class="col-sm-8">jean.dupont@example.com</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Téléphone:</div>
+                                <div class="col-sm-8">+33 6 12 34 56 78</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Adresse:</div>
+                                <div class="col-sm-8">123 Rue de Paris, 75001 Paris</div>
+                            </div>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold">Activité</h6>
+                            <hr>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Statut:</div>
+                                <div class="col-sm-8"><span class="text-success"><i class="bi bi-circle-fill me-1 small"></i>Actif</span></div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Dernière connexion:</div>
+                                <div class="col-sm-8">15/04/2023 à 14:30</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Dernière action:</div>
+                                <div class="col-sm-8">Modification d'un produit</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Modifier Utilisateur -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUserModalLabel">Modifier l'utilisateur</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="fullname" class="form-label">Nom Prénom</label>
+                            <input type="text" class="form-control" id="fullname" name="fullname" value="Jean">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" value="jean.dupont@example.com">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Rôle</label>
+                        <select class="form-select" id="role">
+                            <option value="admin" selected>Administrateur</option>
+                            <option value="editor">Éditeur</option>
+                            <option value="moderator">Modérateur</option>
+                            <option value="user">Utilisateur</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Statut</label>
+                        <select class="form-select" id="status">
+                            <option value="active" selected>Actif</option>
+                            <option value="inactive">Inactif</option>
+                            <option value="suspended">Suspendu</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-danger">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteUserModalLabel">Confirmer la suppression</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.</p>
+                <div class="alert alert-warning">
+                    <strong>Utilisateur :</strong> Jean Dupont (jean.dupont@example.com)
+                </div>
+                <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" id="transferData">
+                    <label class="form-check-label" for="transferData">
+                        Transférer les données à un autre utilisateur
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-danger">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUserModalLabel">Ajouter un utilisateur</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{% url 'add' %}">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="newFullname" class="form-label">Nom Prénom</label>
+                            <input type="text" class="form-control"  name="fullname" id="newFullname">
+                        </div>
+                        <div class="col-md-6">
+                         <label for="newEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email" id="newEmail">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">Mot de passe</label>
+                        <input type="password" class="form-control" name="password1" id="newPassword">
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Confirmer le mot de passe</label>
+                        <input type="password" class="form-control" name="password2" id="confirmPassword">
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="sendWelcomeEmail" checked>
+                            <label class="form-check-label" for="sendWelcomeEmail">Envoyer un email de bienvenue</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-danger">Ajouter</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Styles pour les cartes utilisateurs et les actions au survol */
+    .user-card {
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+
+    .user-card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        transform: translateY(-5px);
+    }
+
+    .avatar-lg {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .avatar-xl {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: 600;
+    }
+
+    .user-actions {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        display: flex;
+    }
+
+    .user-card:hover .user-actions {
+        opacity: 1;
+    }
+
+    .card-footer {
+        border-top: 1px solid rgba(0, 0, 0, 0.125);
+    }
+</style>
+{% endblock %}

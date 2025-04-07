@@ -1,0 +1,9 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div>
+    <img src="{{ product.thumbnail.url }}" style="max-width: 150px;"/>
+    <p>{{ product.name }}</p>
+    <p>{{ product.price }}XOF</p>
+    <p>{{ product.description }}</p>
+</div>
+{% endblock %}

@@ -1,5 +1,6 @@
 {% extends 'layout.html' %}
 {% block content %}
+
 <div class="container mt-4">
     <h2>Gestion des Produits</h2>
     <a href="" class="btn btn-primary mb-3">Ajouter un produit</a>
@@ -9,6 +10,7 @@
                 <th>Nom</th>
                 <th>Quantité</th>
                 <th>Prix</th>
+                <th>Image</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -16,10 +18,16 @@
             {% for product in product_list %}
             <tr>
                 <td>{{ product.name }}</td>
+                <td>{{ product.slug }}</td>
                 <td>{{ product.quantity }}</td>
                 <td>{{ product.price }}</td>
+                <td><img src="{{ product.thumbnail.url }}" alt="{{ product.name }}" style="max-width: 160px;"></td>
                 <td>
-                    <a href="" class="btn btn-warning">Modifier</a>
+                    <!--
+                    <a href="{% url 'product' product.slug %}" class="btn btn-warning">Voir l'article</a>
+                    -->
+                    <a href="{{ product.get_absolute_url }}" class="btn btn-warning">Voir l'article</a>
+                    <a href="" class="btn btn-danger">Supprimer</a>
                     <a href="" class="btn btn-danger">Supprimer</a>
                 </td>
             </tr>

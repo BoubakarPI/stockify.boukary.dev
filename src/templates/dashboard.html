@@ -1,0 +1,312 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h4 mb-0 d-none d-md-block">Tableau de bord</h2>
+    <div class="d-flex">
+        <a href="{% url 'export_products_csv' %}" class="btn btn-outline-secondary me-2">
+            <i class="bi bi-download me-1"></i> Exporter
+        </a>
+        <a href="{% url 'index' %}" class="btn btn-danger">
+            <i class="bi bi-arrow-repeat me-1"></i> Actualiser
+        </a>
+    </div>
+</div>
+
+<!-- Cartes de statistiques -->
+<div class="row g-4 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card h-100 border-0">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="bg-primary bg-opacity-10 p-3 rounded">
+                            <i class="bi bi-grid text-primary fs-4"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h6 class="card-subtitle mb-1 text-muted">Produits</h6>
+                        <h2 class="card-title mb-0 h3">{{ products|length }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card h-100 border-0">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="bg-info bg-opacity-10 p-3 rounded">
+                            <i class="bi bi-people text-info fs-4"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h6 class="card-subtitle mb-1 text-muted">Utilisateurs</h6>
+                        <h2 class="card-title mb-0 h3">{{ users|length }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card h-100 border-0">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="bg-warning bg-opacity-10 p-3 rounded">
+                            <i class="bi bi-cart text-warning fs-4"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h6 class="card-subtitle mb-1 text-muted">Commandes</h6>
+                        <h2 class="card-title mb-0 h3">{{ orders|length }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card h-100 border-0">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="bg-success bg-opacity-10 p-3 rounded">
+                            <i class="bi bi-currency-dollar text-success fs-4"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h6 class="card-subtitle mb-1 text-muted">Revenus</h6>
+                        <h2 class="card-title mb-0 h3">{{ income }} Fcfa</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Graphiques -->
+<div class="row g-4 mb-4">
+    <div class="col-12 col-lg-8">
+        <div class="card border-0 h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Ventes mensuelles</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="salesChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="card border-0 h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Répartitions des commandes</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="categoriesChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alertes de stock bas et commandes récentes -->
+<div class="row g-4 mb-4">
+    <div class="col-12 col-lg-5">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+    <h5 class="card-title mb-0">
+        <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+        Produits à faible stock
+    </h5>
+    <span class="badge bg-danger">{{ low_stock_products|length }} produits</span>
+</div>
+
+<div class="card-body p-0">
+    <div class="list-group list-group-flush">
+        {% for product in low_stock_products %}
+            <div class="list-group-item py-3">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 me-3">
+                            <div class="bg-light rounded" style="width: 48px; height: 48px; overflow: hidden;">
+                                <img src="{{ product.thumbnail.url }}" alt="{{ product.name }}" class="img-fluid">
+                            </div>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">{{ product.name }}</h6>
+                            <small class="text-danger">Stock: {{ product.stock }} unité{{ product.stock|pluralize }}</small>
+                        </div>
+                    </div>
+                    <a href="{% url 'products' %}"  class="btn btn-sm btn-outline-primary">Réapprovisionner</a>
+                </div>
+            </div>
+        {% empty %}
+            <div class="list-group-item py-3 text-center">
+                <small class="text-muted">Aucun produit à faible stock</small>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+    </div>
+
+    <div class="col-12 col-lg-7">
+        <div class="card border-0 h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Commandes récentes</h5>
+                <a href="{% url 'export_orders_csv' %}" class="btn btn-sm btn-outline-secondary">Exporter les commandes</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Client</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Montant</th>
+                                <th scope="col">Statut</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        {% for order in orders %}
+                            <tr>
+                                <td>#ORD-{{order.id}}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar me-2 bg-primary text-white">{{ order.fullname|slice:":2"|upper }}</div>
+                                        <div>{{ order.fullname }}</div>
+                                    </div>
+                                </td>
+                                <td>{{ order.order_date }}</td>
+                                <td>{{ order.total_price }} Fcfa</td>
+                                <td>
+                                    <span class="badge {% if order.statut == 'pending' %}text-dark bg-warning{% else %}bg-success{% endif %}">
+                                        {% if order.statut == 'pending' %}
+                                            En cours
+                                        {% else %}
+                                            Validée
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    <form method="post" action="{% url 'activate_order' order.id %}">
+                                        {% csrf_token %}
+                                        <button {% if order.statut == 'validated' %}disabled{% endif %} type="submit" class="btn btn-sm btn-success">
+                                            <i class="bi bi-check-circle me-1"></i> Valider
+                                        </button>
+                                    </form>
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Script pour les graphiques Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configuration des couleurs
+        const primaryColor = '#dc3545'; // Rouge pour correspondre au thème
+        const secondaryColor = '#6c757d';
+        const successColor = '#198754';
+        const infoColor = '#0dcaf0';
+        const warningColor = '#ffc107';
+        const dangerColor = '#dc3545';
+
+        // Graphique des ventes mensuelles
+        const salesCtx = document.getElementById('salesChart').getContext('2d');
+        const salesChart = new Chart(salesCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'],
+                datasets: [{
+                    label: 'Ventes',
+                    data: {{ monthly_sales|safe }},
+                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                    borderColor: primaryColor,
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(context.parsed.y);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                if (value >= 1000000) {
+                                    return (value / 1000000).toFixed(1) + 'M';
+                                }
+                                return value;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+    const statusLabels = JSON.parse('{{ order_status_labels|safe }}');
+    const statusData = JSON.parse('{{ order_status_data|safe }}');
+
+    const categoriesCtx = document.getElementById('categoriesChart').getContext('2d');
+    const categoriesChart = new Chart(categoriesCtx, {
+        type: 'doughnut',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                data: statusData,
+                backgroundColor: [primaryColor, successColor, warningColor, dangerColor, infoColor],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            },
+            cutout: '70%'
+        }
+    });
+
+    });
+</script>
+{% endblock %}

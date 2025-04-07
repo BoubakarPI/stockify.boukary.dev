@@ -1,0 +1,353 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h4 mb-0">Articles</h2>
+    <button type="button" class="btn btn-danger d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addProductModal">
+        <i class="bi bi-plus-lg me-2"></i> Ajouter un article
+    </button>
+</div>
+
+<form method="get" class="row g-2 mb-2">
+    <div class="col-md-4">
+        <input type="text" name="name" class="form-control" placeholder="Nom du produit"
+               value="{{ request.GET.name }}">
+    </div>
+    <div class="col-md-4">
+        <input type="number" name="stock" class="form-control" placeholder="Stock minimum"
+               value="{{ request.GET.stock }}">
+    </div>
+    <div class="col-md-4">
+        <button type="submit" class="btn btn-danger">Filtrer</button>
+        <a href="{% url 'products' %}" class="btn btn-secondary">Réinitialiser</a>
+    </div>
+</form>
+
+{% if request.GET.name %}
+<div class="alert alert-info mb-4 w-50">
+    <i class="bi bi-info-circle me-2"></i> Résultats de recherche pour : <strong>{{ request.GET.name }}</strong>
+    <a href="{% url 'store:index' %}" class="float-end text-decoration-none">
+        <i class="bi bi-x-circle"></i> Effacer
+    </a>
+</div>
+{% endif %}
+
+
+<div class="row g-4">
+
+    {% for product in product_list %}
+<div class="col-12 col-md-6 col-lg-4 col-xl-3">
+  <div class="card product-card h-100 position-relative">
+    <div class="product-img-container position-relative">
+      <img src="{{ product.thumbnail.url }}" alt="{{ product.name }}" class="card-img-top">
+      <div class="product-actions">
+        <button class="btn btn-sm btn-danger me-1"
+                data-bs-toggle="modal"
+                data-bs-target="#editProductModal"
+                data-id="{{ product.id }}"
+                data-name="{{ product.name }}"
+                data-price="{{ product.price }}"
+                data-description="{{ product.description }}"
+                data-thumbnail="{{ product.thumbnail.url }}">
+          <i class="bi bi-pencil"></i>
+        </button>
+
+        <button class="btn btn-sm btn-light me-1"
+                data-bs-toggle="modal"
+                data-bs-target="#viewProductModal"
+                data-name="{{ product.name }}"
+                data-price="{{ product.price }}"
+                data-description="{{ product.description }}"
+                data-thumbnail="{{ product.thumbnail.url }}">
+          <i class="bi bi-eye"></i>
+        </button>
+
+        <button class="btn btn-sm btn-light"
+                data-bs-toggle="modal"
+                data-bs-target="#deleteProductModal"
+                data-id="{{ product.id }}"
+                data-name="{{ product.name }}">
+          <i class="bi bi-trash"></i>
+        </button>
+      </div>
+      <span class="badge bg-dark position-absolute bottom-0 end-0 m-2">{{ product.stock }} en stock</span>
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">{{ product.name }}</h5>
+      <p class="card-text text-muted small">{{ product.description }}</p>
+    </div>
+    <div class="card-footer bg-white">
+      <span class="text-danger fw-bold">{{ product.price }} Fcfa</span>
+    </div>
+  </div>
+</div>
+  {% empty %}
+    <div class="col-12">
+        <div class="alert alert-warning text-center py-5">
+            <i class="bi bi-exclamation-triangle display-4 d-block mb-3"></i>
+            <h4>Aucun produit trouvé</h4>
+            <p class="mb-0">
+                {% if request.GET.name %}
+                Aucun produit ne correspond à votre recherche "{{ request.GET.name }}".
+                {% endif %}
+            </p>
+            <div class="mt-4">
+                <a href="{% url 'products' %}" class="btn btn-outline-danger">Voir tous les produits</a>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+
+</div>
+
+<!-- Modals pour les actions -->
+<!-- Modal Voir Produit -->
+<div class="modal fade" id="viewProductModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Détails du produit</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body row">
+        <div class="col-md-6">
+          <img id="viewProductImage" src="" class="img-fluid rounded" alt="Product Image">
+        </div>
+        <div class="col-md-6">
+          <h4 id="viewProductName"></h4>
+          <p class="text-danger fw-bold fs-5" id="viewProductPrice"></p>
+          <p id="viewProductDescription"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal Modifier Produit -->
+<div class="modal fade" id="editProductModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <form id="editProductForm" method="POST" action="/products/edit" enctype="multipart/form-data" class="modal-content">
+        {% csrf_token %}
+        <div class="modal-header">
+        <h5 class="modal-title">Modifier le produit</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="id" id="editProductId">
+
+        <div class="mb-3">
+          <label class="form-label">Nom du produit</label>
+          <input type="text" class="form-control" name="name" id="editProductName">
+        </div>
+
+        <div class="row">
+        <div class="col-sm-6 mb-3">
+          <label class="form-label">Prix</label>
+          <div class="input-group">
+            <input type="number" class="form-control" name="price" id="editProductPrice">
+            <span class="input-group-text">Fcfa</span>
+          </div>
+        </div>
+
+        <div class="col-sm-6 mb-3">
+          <label for="editProductStock" class="form-label">Stock</label>
+          <div class="input-group">
+            <input type="number" class="form-control" name="stock" id="editProductStock">
+          </div>
+        </div>
+      </div>
+
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" name="description" id="editProductDescription" rows="4"></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Image (optionnelle)</label>
+          <input type="file" class="form-control" name="thumbnail">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="submit" class="btn btn-danger">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- Modal Supprimer Produit -->
+<div class="modal fade" id="deleteProductModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form id="deleteProductForm" method="POST" action="/products/delete" class="modal-content">
+        {% csrf_token %}
+      <div class="modal-header">
+        <h5 class="modal-title">Confirmer la suppression</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="id" id="deleteProductId">
+        <p>Êtes-vous sûr de vouloir supprimer ce produit ?</p>
+        <div class="alert alert-warning">
+          <strong id="deleteProductName"></strong>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="submit" class="btn btn-danger">Supprimer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- Modal Ajouter Produit -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form id="addProductForm" method="POST" action="/products/add/" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="addProductModalLabel">Ajouter un produit</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="newProductName" class="form-label">Nom du produit</label>
+            <input type="text" class="form-control" name="name" id="newProductName">
+          </div>
+
+
+          <div class="row">
+        <div class="col-sm-6 mb-3">
+          <label class="form-label">Prix</label>
+          <div class="input-group">
+            <input type="number" class="form-control" name="price" id="newProductPrice">
+            <span class="input-group-text">Fcfa</span>
+          </div>
+        </div>
+
+        <div class="col-sm-6 mb-3">
+          <label for="newProductStock" class="form-label">Stock</label>
+          <div class="input-group">
+            <input type="number" class="form-control" name="stock" id="newProductStock">
+          </div>
+        </div>
+      </div>
+          <div class="mb-3">
+            <label for="newProductDescription" class="form-label">Description</label>
+            <textarea class="form-control" id="newProductDescription" name="description" rows="4"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="newProductImage" class="form-label">Image</label>
+            <input type="file" class="form-control" name="thumbnail" id="newProductImage">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-danger">Ajouter</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<style>
+    /* Styles pour les cartes produits et les actions au survol */
+    .product-card {
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+
+    .product-card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        transform: translateY(-5px);
+    }
+
+    .product-img-container {
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .product-img-container img {
+        height: 100%;
+        object-fit: cover;
+        width: 100%;
+    }
+
+    .product-actions {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        display: flex;
+    }
+
+    .product-card:hover .product-actions {
+        opacity: 1;
+    }
+
+    .card-footer {
+        border-top: 1px solid rgba(0, 0, 0, 0.125);
+    }
+
+    /* Limiter la hauteur du texte de description */
+    .card-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+</style>
+
+<script>
+  const viewModal = document.getElementById('viewProductModal')
+  viewModal.addEventListener('show.bs.modal', event => {
+    const button = event.relatedTarget
+    document.getElementById('viewProductName').textContent = button.dataset.name
+    document.getElementById('viewProductPrice').textContent = `${button.dataset.price} Fcfa`
+    document.getElementById('viewProductDescription').textContent = button.dataset.description
+    document.getElementById('viewProductImage').src = button.dataset.thumbnail
+  })
+
+  const editModal = document.getElementById('editProductModal')
+  editModal.addEventListener('show.bs.modal', event => {
+    const button = event.relatedTarget
+
+    // Récupération des éléments du formulaire
+    const form = document.getElementById('editProductForm')
+    const productId = button.dataset.id
+
+    // Injection des valeurs dans le formulaire
+    document.getElementById('editProductId').value = productId
+    document.getElementById('editProductName').value = button.dataset.name
+    document.getElementById('editProductPrice').value = button.dataset.price
+    document.getElementById('editProductDescription').value = button.dataset.description
+    document.getElementById('editProductStock').value = button.dataset.stock
+
+    form.action = `/products/${productId}/edit/`
+  })
+
+  const deleteModal = document.getElementById('deleteProductModal')
+  deleteModal.addEventListener('show.bs.modal', event => {
+    const button = event.relatedTarget
+
+    // Récupération des éléments du formulaire
+    const form = document.getElementById('deleteProductForm')
+    const productId = button.dataset.id
+
+    document.getElementById('deleteProductId').value = button.dataset.id
+    document.getElementById('deleteProductName').textContent = button.dataset.name
+
+    form.action = `/products/${productId}/delete/`
+  })
+
+</script>
+
+
+{% endblock %}

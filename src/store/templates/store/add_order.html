@@ -1,0 +1,250 @@
+{% extends 'store_layout.html' %}
+
+{% block title %}Passer une commande | Notre Boutique{% endblock %}
+
+{% block breadcrumb %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="h2 mb-2">Passer une commande</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'store:index' %}">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'store:index' %}">Produits</a></li>
+                {% if product %}
+                <li class="breadcrumb-item"><a href="{% url 'store:product_detail' product.id %}">{{ product.name }}</a></li>
+                {% endif %}
+                <li class="breadcrumb-item active" aria-current="page">Commander</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+{% endblock %}
+
+{% block contenu %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-cart-check me-2 text-primary"></i>Informations de commande
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <form action="" method="POST" class="needs-validation" novalidate>
+                    {% csrf_token %}
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="fullname" class="form-label">Nom complet</label>
+                            <input type="text" class="form-control" id="fullname" name="fullname" required {% if user.is_authenticated %}value="{{ user.fullname }}"{% endif %}>
+                            <div class="invalid-feedback">
+                                Veuillez entrer votre Nom complet.
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="phone" class="form-label">Numéro de téléphone</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                <input type="tel" class="form-control" id="phone" name="phone" required>
+                                <div class="invalid-feedback">
+                                    Veuillez entrer un numéro de téléphone valide.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="address" class="form-label">Adresse de livraison</label>
+                            <input type="text" class="form-control" id="address" name="address" placeholder="Rue, numéro, bâtiment, etc." required>
+                            <div class="invalid-feedback">
+                                Veuillez entrer votre adresse de livraison.
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <label for="quantity" class="form-label">Quantité</label>
+                            <div class="input-group">
+                                <button type="button" class="btn btn-outline-secondary" id="decreaseQuantity">
+                                    <i class="bi bi-dash"></i>
+                                </button>
+                                <input type="number" class="form-control text-center" id="quantity" name="quantity" value="1" min="1" required>
+                                <button type="button" class="btn btn-outline-secondary" id="increaseQuantity">
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                                <div class="invalid-feedback">
+                                    Veuillez entrer une quantité valide.
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <hr class="my-4">
+
+                    <button class="btn btn-primary btn-lg w-100" type="submit">
+                        <i class="bi bi-bag-check me-2"></i>Confirmer la commande
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm mb-4 position-sticky" style="top: 100px;">
+            <div class="card-header bg-white py-3">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-receipt me-2 text-primary"></i>Résumé de la commande
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                {% if product %}
+                <div class="d-flex mb-3">
+                    <img src="{{ product.thumbnail.url }}" alt="{{ product.name }}" class="img-fluid rounded me-3" style="width: 80px; height: 80px; object-fit: cover;">
+                    <div>
+                        <h6 class="mb-1">{{ product.name }}</h6>
+                        <p class="text-muted small mb-0">{{ product.price }} Fcfa</p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="d-flex mb-3">
+                    <img src="/placeholder.svg?height=80&width=80" alt="Produit" class="img-fluid rounded me-3" style="width: 80px; height: 80px; object-fit: cover;">
+                    <div>
+                        <h6 class="mb-1">Produit sélectionné</h6>
+                        <p class="text-muted small mb-0">Prix unitaire</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <hr>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Prix unitaire</span>
+                    <span id="unitPrice">{{ product.price|default:"0" }} Fcfa</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Frais de livraison</span>
+                    <span id="deliveryFee">2000 Fcfa</span>
+                </div>
+
+
+                <div class="alert alert-info mt-3 mb-0 small">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Votre commande sera traitée dans les plus brefs délais. Vous recevrez une confirmation par email.
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h6 class="mb-3">Besoin d'aide ?</h6>
+                <p class="small text-muted mb-3">Si vous avez des questions concernant votre commande, n'hésitez pas à nous contacter.</p>
+                <div class="d-grid gap-2">
+                    <a href="https://api.whatsapp.com/send?phone=22674505493" class="btn btn-outline-primary">
+                        <i class="bi bi-chat-dots me-2"></i>Discuter avec nous
+                    </a>
+                    <a href="tel:+22674505493" class="btn btn-outline-secondary">
+                        <i class="bi bi-telephone me-2"></i>+226  74 50 54 93
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form validation
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+
+        // Quantity controls
+        const quantityInput = document.getElementById('quantity');
+        const decreaseBtn = document.getElementById('decreaseQuantity');
+        const increaseBtn = document.getElementById('increaseQuantity');
+        const quantityDisplay = document.getElementById('quantityDisplay');
+        const subtotalElement = document.getElementById('subtotal');
+        const totalPriceElement = document.getElementById('totalPrice');
+        const deliveryFeeElement = document.getElementById('deliveryFee');
+        const deliveryOptionSelect = document.getElementById('deliveryOption');
+
+        // Payment method toggle
+        const creditRadio = document.getElementById('credit');
+        const creditCardForm = document.getElementById('creditCardForm');
+        const paymentMethods = document.querySelectorAll('input[name="paymentMethod"]');
+
+        // Get unit price from the page
+        const unitPriceText = document.getElementById('unitPrice').textContent;
+        const unitPrice = parseInt(unitPriceText.replace(/[^0-9]/g, '')) || 0;
+
+        // Update totals function
+        function updateTotals() {
+            const quantity = parseInt(quantityInput.value) || 1;
+            const deliveryOption = deliveryOptionSelect.value;
+
+            let deliveryFee = 2000; // Default
+            if (deliveryOption === 'express') {
+                deliveryFee = 5000;
+            } else if (deliveryOption === 'pickup') {
+                deliveryFee = 0;
+            }
+
+            const subtotal = unitPrice * quantity;
+            const total = subtotal + deliveryFee;
+
+            quantityDisplay.textContent = quantity;
+            subtotalElement.textContent = subtotal.toLocaleString() + ' Fcfa';
+            deliveryFeeElement.textContent = deliveryFee.toLocaleString() + ' Fcfa';
+            totalPriceElement.textContent = total.toLocaleString() + ' Fcfa';
+        }
+
+        // Quantity buttons
+        if (decreaseBtn && increaseBtn && quantityInput) {
+            decreaseBtn.addEventListener('click', () => {
+                const currentValue = parseInt(quantityInput.value) || 1;
+                if (currentValue > 1) {
+                    quantityInput.value = currentValue - 1;
+                    updateTotals();
+                }
+            });
+
+            increaseBtn.addEventListener('click', () => {
+                const currentValue = parseInt(quantityInput.value) || 1;
+                quantityInput.value = currentValue + 1;
+                updateTotals();
+            });
+
+            quantityInput.addEventListener('change', updateTotals);
+        }
+
+        // Delivery option change
+        if (deliveryOptionSelect) {
+            deliveryOptionSelect.addEventListener('change', updateTotals);
+        }
+
+        // Payment method toggle
+        if (paymentMethods && creditCardForm) {
+            paymentMethods.forEach(method => {
+                method.addEventListener('change', function() {
+                    if (this.value === 'credit') {
+                        creditCardForm.style.display = 'flex';
+                    } else {
+                        creditCardForm.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // Initialize
+        updateTotals();
+    });
+</script>
+{% endblock %}
