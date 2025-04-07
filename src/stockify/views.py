@@ -1,6 +1,7 @@
 import csv
+import json
 
-from django.db.models import Sum, F, ExpressionWrapper, DecimalField
+from django.db.models import Sum, F, ExpressionWrapper, DecimalField, Count
 from django.db.models.functions import TruncMonth
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -38,10 +39,27 @@ def index(request):
         monthly_data[month_index] = float(item['total']) if item['total'] else 0
 
 
-    low_stock_products = Product.objects.filter(stock__lt=8)
+    low_stock_products = Product.objects.filter(stock__lt=6)
     users = User.objects.all()
     products = Product.objects.all()
     orders = Order.objects.all()
+
+    STATUS_LABELS = {
+        'pending': 'En attente',
+        'validated': 'Validée',
+        'rejected': 'Rejetée',
+        'cancelled': 'Annulée',
+    }
+
+    order_status_counts = (
+        Order.objects.values('statut')
+        .annotate(count=Count('id'))
+    )
+
+    # Pour envoyer au JS
+    labels = [STATUS_LABELS.get(entry['statut'], entry['statut']) for entry in order_status_counts]
+    data = [entry['count'] for entry in order_status_counts]
+
 
     context = {
         'products': products,
@@ -50,6 +68,8 @@ def index(request):
         'low_stock_products': low_stock_products,
         'income': income,
         'monthly_sales': monthly_data,
+        'order_status_labels': json.dumps(labels),
+        'order_status_data': json.dumps(data),
     }
     return render(request, 'dashboard.html', context)
 
