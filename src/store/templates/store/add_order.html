@@ -8,8 +8,8 @@
         <h1 class="h2 mb-2">Passer une commande</h1>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{% url 'store:product_list' %}">Accueil</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'store:product_list' %}">Produits</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'store:index' %}">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'store:index' %}">Produits</a></li>
                 {% if product %}
                 <li class="breadcrumb-item"><a href="{% url 'store:product_detail' product.id %}">{{ product.name }}</a></li>
                 {% endif %}

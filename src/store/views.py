@@ -1,30 +1,34 @@
 from django.shortcuts import render
 
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic import ListView
 from inventory.models import Product
 from django.contrib import messages
 from .forms import OrderForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
-def product_list(request):
-    products = Product.objects.all()
+class StoreListView(ListView):
+    model = Product
+    template_name = "store/product_list.html"
 
-    query = request.GET.get('search')
-    if query:
-        products = products.filter(name__icontains=query)
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        name = self.request.GET.get("name", "").strip()
+        stock = self.request.GET.get("stock", "").strip()
 
-    paginator = Paginator(products, 3)
-    page = request.GET.get('page')
+        if name:
+            queryset = queryset.filter(name__icontains=name)
 
-    try:
-        products = paginator.page(page)
-    except PageNotAnInteger:
-        products = paginator.page(1)
-    except EmptyPage:
-        products = paginator.page(paginator.num_pages)
+        if stock:
+            try:
+                stock = int(stock)
+                queryset = queryset.filter(stock__gte=stock)
+            except ValueError:
+                pass  # Ignore les valeurs non numériques
 
-    return render(request, 'store/product_list.html', {'products': products})
+        return queryset
+
 
 
 def product_detail(request, product_id):

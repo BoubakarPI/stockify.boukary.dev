@@ -8,7 +8,7 @@
     </button>
 </div>
 
-<form method="get" class="row g-2 mb-5">
+<form method="get" class="row g-2 mb-2">
     <div class="col-md-4">
         <input type="text" name="name" class="form-control" placeholder="Nom du produit"
                value="{{ request.GET.name }}">
@@ -18,10 +18,19 @@
                value="{{ request.GET.stock }}">
     </div>
     <div class="col-md-4">
-        <button type="submit" class="btn btn-primary">Filtrer</button>
+        <button type="submit" class="btn btn-danger">Filtrer</button>
         <a href="{% url 'products' %}" class="btn btn-secondary">Réinitialiser</a>
     </div>
 </form>
+
+{% if request.GET.name %}
+<div class="alert alert-info mb-4 w-50">
+    <i class="bi bi-info-circle me-2"></i> Résultats de recherche pour : <strong>{{ request.GET.name }}</strong>
+    <a href="{% url 'store:index' %}" class="float-end text-decoration-none">
+        <i class="bi bi-x-circle"></i> Effacer
+    </a>
+</div>
+{% endif %}
 
 
 <div class="row g-4">
@@ -72,6 +81,21 @@
     </div>
   </div>
 </div>
+  {% empty %}
+    <div class="col-12">
+        <div class="alert alert-warning text-center py-5">
+            <i class="bi bi-exclamation-triangle display-4 d-block mb-3"></i>
+            <h4>Aucun produit trouvé</h4>
+            <p class="mb-0">
+                {% if request.GET.name %}
+                Aucun produit ne correspond à votre recherche "{{ request.GET.name }}".
+                {% endif %}
+            </p>
+            <div class="mt-4">
+                <a href="{% url 'products' %}" class="btn btn-outline-danger">Voir tous les produits</a>
+            </div>
+        </div>
+    </div>
 {% endfor %}
 
 

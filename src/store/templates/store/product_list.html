@@ -14,17 +14,7 @@
     </div>
 
     <div class="d-flex align-items-center mt-3 mt-md-0">
-        <div class="me-3">
-            <label for="sortOrder" class="form-label visually-hidden">Trier par</label>
-            <select class="form-select" id="sortOrder">
-                <option value="popularity">Popularité</option>
-                <option value="price_asc">Prix croissant</option>
-                <option value="price_desc">Prix décroissant</option>
-                <option value="newest">Plus récents</option>
-            </select>
-        </div>
-
-        <div class="btn-group" role="group" aria-label="Affichage">
+                <div class="btn-group" role="group" aria-label="Affichage">
             <button type="button" class="btn btn-outline-secondary active" id="gridView">
                 <i class="bi bi-grid-3x3-gap-fill"></i>
             </button>
@@ -36,9 +26,9 @@
 </div>
 
 <div class="mb-4">
-    <form class="d-flex" method="GET" action="{% url 'store:product_list' %}">
+    <form class="d-flex" method="GET">
         <div class="input-group">
-            <input class="form-control" type="search" name="recherche" placeholder="Rechercher un produit..." aria-label="Recherche" value="{{ request.GET.recherche|default:'' }}">
+            <input class="form-control" type="search" name="name" placeholder="Rechercher un produit..." aria-label="Recherche" value="{{ request.GET.name }}">
             <button class="btn btn-primary" type="submit">
                 <i class="bi bi-search me-1"></i> Rechercher
             </button>
@@ -46,26 +36,23 @@
     </form>
 </div>
 
-{% if request.GET.recherche %}
+{% if request.GET.name %}
 <div class="alert alert-info mb-4">
-    <i class="bi bi-info-circle me-2"></i> Résultats de recherche pour : <strong>{{ request.GET.recherche }}</strong>
-    <a href="{% url 'store:product_list' %}" class="float-end text-decoration-none">
+    <i class="bi bi-info-circle me-2"></i> Résultats de recherche pour : <strong>{{ request.GET.name }}</strong>
+    <a href="{% url 'store:index' %}" class="float-end text-decoration-none">
         <i class="bi bi-x-circle"></i> Effacer
     </a>
 </div>
 {% endif %}
 
 <div class="row g-4" id="productsGrid">
-    {% for product in products %}
+    {% for product in product_list %}
     <div class="col-sm-6 col-lg-4">
         <div class="card h-100 product-card border-0 shadow-sm">
             <div class="position-relative">
                 <div class="product-img-container">
                     <img src="{{ product.thumbnail.url }}" class="card-img-top" alt="{{ product.name }}">
                 </div>
-
-
-
             </div>
 
             <div class="card-body">
@@ -106,14 +93,12 @@
             <i class="bi bi-exclamation-triangle display-4 d-block mb-3"></i>
             <h4>Aucun produit trouvé</h4>
             <p class="mb-0">
-                {% if request.GET.recherche %}
-                Aucun produit ne correspond à votre recherche "{{ request.GET.recherche }}".
-                {% else %}
-                Aucun produit n'est disponible dans cette catégorie pour le moment.
+                {% if request.GET.name %}
+                Aucun produit ne correspond à votre recherche "{{ request.GET.name }}".
                 {% endif %}
             </p>
             <div class="mt-4">
-                <a href="{% url 'store:product_list' %}" class="btn btn-outline-primary">Voir tous les produits</a>
+                <a href="{% url 'store:index' %}" class="btn btn-outline-primary">Voir tous les produits</a>
             </div>
         </div>
     </div>
@@ -121,7 +106,7 @@
 </div>
 
 <div class="list-group d-none" id="productsList">
-    {% for product in products %}
+    {% for product in product_list %}
     <div class="list-group-item p-3 border-0 shadow-sm rounded mb-3">
         <div class="row g-3">
             <div class="col-md-3">
@@ -167,7 +152,7 @@
             {% endif %}
         </p>
         <div class="mt-4">
-            <a href="{% url 'store:product_list' %}" class="btn btn-outline-primary">Voir tous les produits</a>
+            <a href="{% url 'store:index' %}" class="btn btn-outline-primary">Voir tous les produits</a>
         </div>
     </div>
     {% endfor %}
