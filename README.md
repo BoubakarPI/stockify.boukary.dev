@@ -133,7 +133,7 @@ stockify.boukary.dev/
 ```bash
 # Cloner le projet
 git clone https://github.com/BoubakarPI/stockify.boukary.dev.git
-cd boukary.dev.com/src/
+cd stockify.boukary.dev/src/
 
 # Créer un environnement virtuel
 python -m venv venv
