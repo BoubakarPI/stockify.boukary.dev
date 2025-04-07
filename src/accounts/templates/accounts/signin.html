@@ -1,76 +1,51 @@
-{% extends 'auth-layout.html' %}
+{% extends 'auth_layout.html' %}
 {% block content %}
 
-<div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 w-full max-w-md">
-        <div class="text-center mb-8">
-            <h1 class="text-2xl font-bold text-gray-800">Connexion</h1>
-            <p class="text-gray-500 mt-2">Entrez vos identifiants pour vous connecter</p>
-        </div>
-
-        <form method="post">
-            {% csrf_token %}
-
-            <div class="mb-6">
-                <label for="id_username" class="block mb-4text-gray-300 mb-4 "> {{ form.username.label }}</label>
-                {{ form.username }}
-
-                {% if form.username.errors %}
-                    {% for error in form.username.errors %}
-                        <p class="text-red-500 text-xs italic">{{ error }} </p>
-                    {% endfor %}
-                {% endif %}
-            </div>
-
-            <div class="mb-6">
-                <label for="id_paswword" class="block mb-4text-gray-300 mb-4 "> {{ form.password.label }}</label>
-                {{ form.password }}
-
-                {% if form.username.errors %}
-                    {% for error in form.password.errors %}
-                        <p class="text-red-500 text-xs italic">{{ error }} </p>
-                    {% endfor %}
-                {% endif %}
-            </div>
-
-            <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg transition-colors">
-                Se connecter
-            </button>
-        </form>
-
-        {% if form.non_field_errors %}
-            {% for error in form.non_field_errors %}
-                 <p class="text-red-500 text-xs italic">{{ error }}</p>
-            {% endfor %}
-        {% endif %}
-
-
-        <div class="mt-8">
-            <div class="relative">
-                <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t border-gray-300"></div>
-                </div>
-                <div class="relative flex justify-center text-sm">
-                    <span class="px-2 bg-white text-gray-500">Ou continuer avec</span>
-                </div>
-            </div>
-
-            <div class="mt-6">
-                <button class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
-                    <svg class="h-5 w-5 mr-2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.345-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z" fill="#4285F4"/>
-                        <path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.345-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z" fill="#4285F4"/>
-                        <path d="M7 11V8H5v3H2v2h3v3h2v-3h3v-2H7z" fill="#34A853"/>
-                        <path d="M16.24 13.65c-1.25 0-2.49-.31-3.58-.93l-1.44 1.44c1.52.87 3.25 1.34 5.02 1.34 2.24 0 4.38-.49 6.02-1.34l-1.44-1.44c-1.09.62-2.33.93-3.58.93z" fill="#FBBC05"/>
-                        <path d="M5.79 7.05c-.87 1.52-1.34 3.25-1.34 5.02 0 1.77.47 3.5 1.34 5.02l1.44-1.44c-.62-1.09-.93-2.33-.93-3.58 0-1.25.31-2.49.93-3.58L5.79 7.05z" fill="#EA4335"/>
-                    </svg>
-                    Continuer avec Google
-                </button>
-            </div>
-        </div>
-
-        <p class="text-center mt-8 text-sm text-gray-600">
-            Vous n'avez pas de compte? <a href="{% url 'signup' %}" class="text-blue-600 hover:text-blue-800 font-medium">S'inscrire</a>
-        </p>
+<div class="card p-4 p-sm-5 w-100" style="max-width: 450px;">
+    <div class="text-center mb-4">
+        <h1 class="h3 fw-bold text-dark">Connexion</h1>
+        <p class="text-muted mt-2">Entrez vos identifiants pour vous connecter</p>
     </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="id_username" class="form-label mb-2">{{ form.username.label }}</label>
+            {{ form.username}}
+
+            {% if form.username.errors %}
+                {% for error in form.username.errors %}
+                    <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <div class="mb-4">
+            <label for="id_password" class="form-label mb-2">{{ form.password.label }}</label>
+            {{ form.password }}
+
+            {% if form.password.errors %}
+                {% for error in form.password.errors %}
+                    <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 py-2 mb-3">
+            Se connecter
+        </button>
+    </form>
+
+    {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger py-2 small">{{ error }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <p class="text-center mt-4 small text-muted">
+        Vous n'avez pas de compte? <a href="{% url 'signup' %}" class="text-primary text-decoration-none fw-medium">S'inscrire</a>
+    </p>
+</div>
 
 {% endblock %}
