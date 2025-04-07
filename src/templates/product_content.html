@@ -8,7 +8,7 @@
     </button>
 </div>
 
-<form method="get" class="row g-2 mb-2">
+<form method="get" class="row g-2 mb-5">
     <div class="col-md-4">
         <input type="text" name="name" class="form-control" placeholder="Nom du produit"
                value="{{ request.GET.name }}">
@@ -48,7 +48,9 @@
                 data-name="{{ product.name }}"
                 data-price="{{ product.price }}"
                 data-description="{{ product.description }}"
-                data-thumbnail="{{ product.thumbnail.url }}">
+                data-thumbnail="{{ product.thumbnail.url }}"
+                data-stock="{{ product.stock }}"
+        >
           <i class="bi bi-pencil"></i>
         </button>
 
@@ -58,7 +60,9 @@
                 data-name="{{ product.name }}"
                 data-price="{{ product.price }}"
                 data-description="{{ product.description }}"
-                data-thumbnail="{{ product.thumbnail.url }}">
+                data-thumbnail="{{ product.thumbnail.url }}"
+                data-stock="{{ product.stock }}"
+        >
           <i class="bi bi-eye"></i>
         </button>
 
@@ -97,7 +101,6 @@
         </div>
     </div>
 {% endfor %}
-
 
 </div>
 

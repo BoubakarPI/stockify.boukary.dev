@@ -16,7 +16,7 @@ def min_role_required(required_role):
         def _wrapped_view(request, *args, **kwargs):
             user = request.user
             if not user.is_authenticated:
-                return redirect('login')
+                return redirect('signin')
             user_role = getattr(user, 'role', 'viewer')
             if ROLE_PRIORITY.get(user_role, 0) < ROLE_PRIORITY.get(required_role, 0):
                 return redirect('unauthorized')

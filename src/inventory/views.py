@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -10,6 +11,9 @@ from store.models import Order
 
 from stockify.middleware import min_role_required, RoleRequiredMixin
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ProductListView(ListView):
@@ -51,6 +55,11 @@ class ProductCreateView(RoleRequiredMixin, LoginRequiredMixin, CreateView):
     login_url = '/accounts/signin/'
     required_role = 'editor'
 
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Une erreur est survenue lors de l'ajout du produit. Vérifiez les champs et réessayez.")
+        return redirect('products')
+
     def form_valid(self, form):
         response = super().form_valid(form)
 
@@ -82,6 +91,11 @@ class ProductUpdateView(RoleRequiredMixin, LoginRequiredMixin,  UpdateView):
     success_url = reverse_lazy('products')
     login_url = '/accounts/signin/'
     required_role = 'editor'
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Une erreur est survenue lors de l'ajout du produit. Vérifiez les champs et réessayez.")
+        return redirect('products')
+
 
     def form_valid(self, form):
         old_obj = self.get_object()
@@ -132,31 +146,71 @@ class ProductDeleteView(RoleRequiredMixin, LoginRequiredMixin, DeleteView):
 
     def delete(self, request, *args, **kwargs):
         obj = self.get_object()
-        ActivityLog.objects.create(
-            id=f"LOG-{obj.id}",
-            user_email=request.user.email,
-            ip_address=get_client_ip(request),
+
+        old_data = {
+            "name": obj.name,
+            "price": obj.price,
+            "stock": obj.stock,
+            "description": obj.description,
+        }
+        new_data = {
+            "name": obj.name,
+            "price": obj.price,
+            "stock": obj.stock,
+            "description": obj.description,
+        }
+
+        # Différences
+        changes = clean_json_values({
+            key: [old_data[key], new_data[key]]
+            for key in old_data if old_data[key] != new_data[key]
+        })
+        try:
+            log = ActivityLog.objects.create(
+            activity_id=f"LOG-{obj.id}",
+            user_email=self.request.user.email,
+            user_fullname= self.request.user.fullname,
+            ip_address=get_client_ip(self.request),
             action='delete',
             object_type='Produit',
             object_id=str(obj.id),
             object_name=obj.name,
-            message=f"Produit supprimé par {request.user.fullname}",
-            changes= clean_json_values({
-                "name": obj.name,
-                "price": obj.price,
-                "stock": obj.stock,
-                "description": obj.description
-            })
+            changes=changes,
+            message=f"Produit supprimé par {self.request.user.fullname}"
         )
+            logger.debug(f"Log de suppression créé : {log}")
+        except Exception as e:
+            print(f"[LOG ERROR] {e}")
+
         return super().delete(request, *args, **kwargs)
 
+
+
 @min_role_required('editor')
-def validate_commande(request, order_id):
+def validate_order(request, order_id):
     order = get_object_or_404(Order, id=order_id)
+
     if request.method == 'POST':
-        order.statut = 'validated'
-        order.save()
+        product = order.product
+
+        if product and product.stock is not None:
+            if product.stock >= order.quantity:
+                # Mise à jour du stock
+                product.stock -= order.quantity
+                product.save()
+
+                # Validation de la commande
+                order.statut = 'validated'
+                order.save()
+
+                messages.success(request, "Commande validée et stock mis à jour.")
+            else:
+                messages.error(request, f"Stock insuffisant pour {product.name} (stock actuel : {product.stock}).")
+        else:
+            messages.error(request, "Produit invalide ou stock non défini.")
+
     return redirect('index')
+
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')

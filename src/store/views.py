@@ -50,7 +50,7 @@ def add_order(request, product_id=None):
             order.save()
             messages.success(request,
                              "Commande effectuée avec succès ! Vous pouvez commander à nouveau.")
-            return redirect('/')
+            return redirect('store:index')
     else:
         form = OrderForm(initial={'product': product})
 
