@@ -18,7 +18,6 @@ class CreateUserByAdminView(View):
     def post(self, request, *args, **kwargs):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            print('+++++++++++++ valid')
             user = form.save()
             return redirect('accounts')
         return redirect('accounts')
@@ -52,4 +51,4 @@ def signup_view(request):
 
 def logout_user(request):
     logout(request)
-    return redirect('home')
+    return redirect('index')

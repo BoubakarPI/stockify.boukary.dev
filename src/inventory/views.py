@@ -12,6 +12,22 @@ class ProductListView(ListView):
     model = Product
     template_name = "product_content.html"
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        name = self.request.GET.get("name", "").strip()
+        stock = self.request.GET.get("stock", "").strip()
+
+        if name:
+            queryset = queryset.filter(name__icontains=name)
+
+        if stock:
+            try:
+                stock = int(stock)
+                queryset = queryset.filter(stock__gte=stock)
+            except ValueError:
+                pass  # Ignore les valeurs non numériques
+
+        return queryset
 
 class ProductDetailView(DetailView):
     template_name = 'inventory/product.html'
